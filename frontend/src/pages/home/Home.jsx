@@ -4,8 +4,8 @@ import './home.scss'
 import Widget from '../../components/widget/Widget'
 import Featured from '../../components/featured/Featured'
 import Chart from '../../components/chart/Chart'
-import AlertForCrud from '../../components/alert/alert'
-import DenseTable from '../../components/table/Tabel'
+import BasicTable from '../../components/table/Table'
+
 const Home = () => {
   return (
     <div className='home'>
@@ -22,11 +22,9 @@ const Home = () => {
           <Featured />
           <Chart />
         </div>
-        <div className='alert'>
-          <AlertForCrud />
-        </div>
-        <div className='table'>
-          <DenseTable />
+        <div className='listContainer'>
+          <div className='listTitle'>Last Transactions</div>
+          <BasicTable />
         </div>
       </div>
     </div>

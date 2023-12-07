@@ -7,14 +7,14 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
 const Widget = props => {
   let data = {}
 
-  const amount = 100
+  const amount = 200
   const diff = 20
 
   switch (props.type) {
     case 'user':
       data = {
         title: 'USERS',
-        isMoney: false,
+        isMoney: true,
         link: 'See All Users',
         icon: (
           <PersonOutlineIcon
@@ -30,7 +30,7 @@ const Widget = props => {
     case 'order':
       data = {
         title: 'ORDERS',
-        isMoney: false,
+        isMoney: true,
         link: 'Show All Orders',
         icon: (
           <ShoppingCartIcon

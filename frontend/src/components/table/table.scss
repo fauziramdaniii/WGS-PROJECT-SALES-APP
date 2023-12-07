@@ -1,14 +1,40 @@
 .table {
-   display: flex;
-    justify-content: space-between;
-    flex: 1;
-    padding: 10px;
-    margin-top: 50px;
-    margin-left: 10px;
-    flex-direction: column;
-    -webkit-box-shadow: 2px 4px 10px 1px rgba(0,0,0,0.47);
-    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-    border-radius: 10px;
-    height: 100px;
-    background-color: black;
+    .cellWrapper {
+        display: flex;
+        align-items: center;
+
+        .image {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+    }
+
+   .status {
+    padding: 5px;
+    border-radius: 5px;
+
+    &.Available {
+        color: green;
+        background-color: rgba(0, 128, 0, 0.151);
+    }
+
+    &.Booked {
+        color: rgb(0, 0, 0); /* Warna kuning untuk status booked */
+        background-color: rgba(229, 255, 0, 0.151);
+    }
+
+    &.Sold {
+        color: red; /* Warna merah untuk status sold */
+        background-color: rgba(255, 0, 0, 0.151);
+    }
+
+    &.Canceled {
+        color: grey; /* Warna abu-abu untuk status canceled */
+        background-color: rgba(128, 128, 128, 0.151);
+    }
+}
+
 }

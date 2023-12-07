@@ -66,7 +66,6 @@ const Sidebar = () => {
             <span>Setting</span>
           </li>
           <p className='title'>USER</p>
-
           <li>
             <PermContactCalendarRoundedIcon className='icon' />
             <span>Profile</span>
