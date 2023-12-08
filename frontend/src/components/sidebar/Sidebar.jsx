@@ -1,4 +1,7 @@
+// Outline CSS
 import './sidebar.scss'
+
+// Icon From Material React UI
 import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded'
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
 import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits'
@@ -12,11 +15,16 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import PermContactCalendarRoundedIcon from '@mui/icons-material/PermContactCalendarRounded'
 import LogoutIcon from '@mui/icons-material/Logout'
 
+// Link Router
+import { Link } from 'react-router-dom'
+
 const Sidebar = () => {
   return (
     <div className='sidebar'>
       <div className='top'>
-        <span className='logo'>Admin App</span>
+        <Link to='/' style={{ textDecoration: 'none' }}>
+          <span className='logo'>Admin App</span>
+        </Link>
       </div>
       <hr />
       <div className='center'>
@@ -27,14 +35,18 @@ const Sidebar = () => {
             <span>Dashboard</span>
           </li>
           <p className='title'>LIST</p>
-          <li>
-            <PersonRoundedIcon className='icon' />
-            <span>Users</span>
-          </li>
-          <li>
-            <ProductionQuantityLimitsIcon className='icon' />
-            <span>Product</span>
-          </li>
+          <Link to='/users' style={{ textDecoration: 'none' }}>
+            <li>
+              <PersonRoundedIcon className='icon' />
+              <span>Users</span>
+            </li>
+          </Link>
+          <Link to='/products' style={{ textDecoration: 'none' }}>
+            <li>
+              <ProductionQuantityLimitsIcon className='icon' />
+              <span>Product</span>
+            </li>
+          </Link>
           <li>
             <CreditCardIcon className='icon' />
             <span>Orders</span>

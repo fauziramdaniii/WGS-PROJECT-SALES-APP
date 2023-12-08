@@ -52,7 +52,7 @@ export const userRows = [
     username: 'Jamie Lannister',
     img: 'https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
     email: '2snow@gmail.com',
-    status: 'passive',
+    status: 'inactive',
     age: 42
   },
   {
@@ -60,7 +60,7 @@ export const userRows = [
     username: 'Lannister',
     img: 'https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
     email: '3snow@gmail.com',
-    status: 'pending',
+    status: 'inactive',
     age: 45
   },
   {
@@ -76,7 +76,7 @@ export const userRows = [
     username: 'Targaryen',
     img: 'https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
     email: '5snow@gmail.com',
-    status: 'passive',
+    status: 'inactive',
     age: 22
   },
   {
@@ -92,7 +92,7 @@ export const userRows = [
     username: 'Clifford',
     img: 'https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
     email: '7snow@gmail.com',
-    status: 'passive',
+    status: 'inactive',
     age: 44
   },
   {
@@ -108,7 +108,7 @@ export const userRows = [
     username: 'Roxie',
     img: 'https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
     email: 'snow@gmail.com',
-    status: 'pending',
+    status: 'inactive',
     age: 65
   },
   {
