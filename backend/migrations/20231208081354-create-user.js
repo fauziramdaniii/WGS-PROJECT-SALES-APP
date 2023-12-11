@@ -43,10 +43,13 @@ module.exports = {
       token: {
         type: Sequelize.STRING
       },
-      expired_token: {
+      expiredToken: {
         type: Sequelize.DATE
       },
-      created_at: {
+       updatedAt: {
+        type: Sequelize.DATE
+      },
+      createdAt: {
         type: Sequelize.DATE
       },
     });

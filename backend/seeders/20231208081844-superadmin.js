@@ -14,14 +14,15 @@ module.exports = {
       email: 'superadmin@example.com',
       fullname: 'Super Admin',
       username: 'superadmin',
-      roles: 'admin',
+      roles: 'superadmin',
       address: '123 Main Street',
       city: 'Cityville',
       state: 'Stateville',
       country: 'Countryville',
       token: 'superadmin_token',
-      expired_token:  new Date(),
-      created_at:  new Date(),
+      expiredToken:  new Date(),
+      // UpdatedAt: new Date(),
+      createdAt:  new Date(),
     }], {});
   },
 

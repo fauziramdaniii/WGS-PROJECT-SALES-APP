@@ -1,17 +1,12 @@
-//models/user
+const { Sequelize, DataTypes, Model } = require('sequelize');
+const config = require('../config/config.json')
 
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-   
-    static associate(models) {
-      // define association here
-    }
-  }
-  User.init({
+const sequelize = new Sequelize(config[process.env.NODE_ENV || 'development'])
+
+class User extends Model {}
+
+User.init(
+  {
     password: DataTypes.STRING,
     email: DataTypes.STRING,
     fullname: DataTypes.STRING,
@@ -23,11 +18,15 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.STRING,
     country: DataTypes.STRING,
     token: DataTypes.STRING,
-    expired_token: DataTypes.DATE,
-    created_at: DataTypes.DATE
-  }, {
+    expiredToken: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
+    createdAt: DataTypes.DATE
+  },
+  {
     sequelize,
     modelName: 'User',
-  });
-  return User;
-};
+    timestamps: true
+  }
+);
+
+module.exports={User};
