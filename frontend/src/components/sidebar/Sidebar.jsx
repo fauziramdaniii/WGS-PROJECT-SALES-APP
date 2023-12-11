@@ -14,11 +14,13 @@ import HubIcon from '@mui/icons-material/Hub'
 import SettingsIcon from '@mui/icons-material/Settings'
 import PermContactCalendarRoundedIcon from '@mui/icons-material/PermContactCalendarRounded'
 import LogoutIcon from '@mui/icons-material/Logout'
+import useAuthStores from '../../stores/auth/Auth'
 
 // Link Router
 import { Link } from 'react-router-dom'
 
 const Sidebar = () => {
+  const { postLogout } = useAuthStores()
   return (
     <div className='sidebar'>
       <div className='top'>
@@ -84,7 +86,7 @@ const Sidebar = () => {
           </li>
           <li>
             <LogoutIcon className='icon' />
-            <span>Logout</span>
+            <span onClick={postLogout}>Logout</span>
           </li>
         </ul>
       </div>

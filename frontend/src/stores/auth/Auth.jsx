@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 const useAuthStores = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [userToken, setUserToken] = useState(null)
   const navigate = useNavigate()
 
   const postLogin = async () => {
@@ -17,7 +18,10 @@ const useAuthStores = () => {
       })
 
       if (response.status === 200) {
-        localStorage.setItem('token', response.data.result.token)
+        // localStorage.setItem('token', response.data.result.token)
+        const token = response.data.result.token
+        localStorage.setItem('token', token)
+        setUserToken(token) // Set userToken state
 
         Swal.fire({
           title: 'HI Welcome Back!',
@@ -50,12 +54,33 @@ const useAuthStores = () => {
     }
   }
 
+  const postLogout = async () => {
+    try {
+      const response = await apiService.byPostData('auth/logout', null, {
+        headers: {
+          Authorization: 'Bearer ' + userToken, // Include the user's token
+          'Content-Type': 'application/json'
+        }
+      })
+
+      console.log(response)
+
+      if (response.status === 200) {
+        console.log('Logout successful')
+      } else {
+        console.error('Logout failed')
+      }
+    } catch (error) {
+      console.error('Logout failed', error)
+    }
+  }
+
   const handleSubmit = event => {
     event.preventDefault()
     postLogin()
   }
 
-  return { postLogin, handleSubmit, setEmail, setPassword }
+  return { postLogin, handleSubmit, setEmail, setPassword, postLogout }
 }
 
 export default useAuthStores

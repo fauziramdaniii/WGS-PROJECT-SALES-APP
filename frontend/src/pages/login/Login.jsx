@@ -10,8 +10,7 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { Container } from '@mui/material'
-import useAuthStores from '../../stores/auth/auth' // ini import an dari direktori terpisah
-
+import useAuthStores from '../../stores/auth/Auth'
 const Login = () => {
   const { postLogin, handleSubmit, setEmail, setPassword } = useAuthStores() // Mendapatkan fungsi postLogin, handleSubmit, setEmail, dan setPassword dari useAuthStores
 
