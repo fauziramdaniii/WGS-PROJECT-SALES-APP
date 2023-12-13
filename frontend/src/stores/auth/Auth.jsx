@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom'
 const useAuthStores = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [userToken, setUserToken] = useState(null)
   const navigate = useNavigate()
 
   const postLogin = async () => {
@@ -18,10 +17,8 @@ const useAuthStores = () => {
       })
 
       if (response.status === 200) {
-        // localStorage.setItem('token', response.data.result.token)
-        const token = response.data.result.token
-        localStorage.setItem('token', token)
-        setUserToken(token) // Set userToken state
+        localStorage.setItem('token', response.data.result.token)
+        localStorage.setItem('expiredToken', response.data.result.expiredToken)
 
         Swal.fire({
           title: 'HI Welcome Back!',
@@ -34,13 +31,13 @@ const useAuthStores = () => {
         const userRole = response.data.result.roles
         switch (userRole) {
           case 'superadmin':
-            navigate('/')
+            navigate('/superadmin')
             break
           case 'admin':
             navigate('/admin')
             break
           default:
-            navigate('/home')
+            navigate('/')
         }
       } else if (response.response.status === 401) {
         Swal.fire({
@@ -54,33 +51,49 @@ const useAuthStores = () => {
     }
   }
 
-  const postLogout = async () => {
-    try {
-      const response = await apiService.byPostData('auth/logout', null, {
-        headers: {
-          Authorization: 'Bearer ' + userToken, // Include the user's token
-          'Content-Type': 'application/json'
-        }
-      })
-
-      console.log(response)
-
-      if (response.status === 200) {
-        console.log('Logout successful')
-      } else {
-        console.error('Logout failed')
-      }
-    } catch (error) {
-      console.error('Logout failed', error)
-    }
-  }
-
   const handleSubmit = event => {
     event.preventDefault()
     postLogin()
   }
 
-  return { postLogin, handleSubmit, setEmail, setPassword, postLogout }
+  const logout = () => {
+    const token = localStorage.getItem('token')
+    const expiredToken = localStorage.getItem('expiredToken')
+
+    const response = apiService.byPostData('auth/logout', {})
+    console.log(response)
+    if (token || expiredToken) {
+      apiService
+        .byPostData('auth/logout', { token })
+        .then(() => {
+          localStorage.removeItem('token')
+          localStorage.removeItem('expiredToken')
+
+          Swal.fire({
+            title: 'Logged Out!',
+            text: 'You have been successfully logged out.',
+            icon: 'success'
+          })
+
+          navigate('/login')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  }
+
+  // const logout = () => {
+  //   localStorage.removeItem('token')
+  //   navigate('/login')
+  //   Swal.fire({
+  //     title: 'Logged Out!',
+  //     text: 'You have been successfully logged out.',
+  //     icon: 'success'
+  //   })
+  // }
+
+  return { postLogin, handleSubmit, setEmail, setPassword, logout }
 }
 
 export default useAuthStores

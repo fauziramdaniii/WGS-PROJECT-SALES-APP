@@ -20,11 +20,11 @@ import useAuthStores from '../../stores/auth/Auth'
 import { Link } from 'react-router-dom'
 
 const Sidebar = () => {
-  const { postLogout } = useAuthStores()
+  const { logout } = useAuthStores()
   return (
     <div className='sidebar'>
       <div className='top'>
-        <Link to='/' style={{ textDecoration: 'none' }}>
+        <Link to='/superadmin' style={{ textDecoration: 'none' }}>
           <span className='logo'>Admin App</span>
         </Link>
       </div>
@@ -37,13 +37,13 @@ const Sidebar = () => {
             <span>Dashboard</span>
           </li>
           <p className='title'>LIST</p>
-          <Link to='/users' style={{ textDecoration: 'none' }}>
+          <Link to='/superadmin/users' style={{ textDecoration: 'none' }}>
             <li>
               <PersonRoundedIcon className='icon' />
               <span>Users</span>
             </li>
           </Link>
-          <Link to='/products' style={{ textDecoration: 'none' }}>
+          <Link to='/superadmin/products' style={{ textDecoration: 'none' }}>
             <li>
               <ProductionQuantityLimitsIcon className='icon' />
               <span>Product</span>
@@ -86,7 +86,7 @@ const Sidebar = () => {
           </li>
           <li>
             <LogoutIcon className='icon' />
-            <span onClick={postLogout}>Logout</span>
+            <span onClick={logout}>Logout</span>
           </li>
         </ul>
       </div>
