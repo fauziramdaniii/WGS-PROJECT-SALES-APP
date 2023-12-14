@@ -16,6 +16,15 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    user.token = null;
+    await user.save();
+    res.status(200).json({ message: 'Logout successful' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
-
-module.exports = { authenticateToken };
+module.exports = { authenticateToken, logout };

@@ -24,7 +24,42 @@ module.exports = {
       // UpdatedAt: new Date(),
       createdAt:  new Date(),
     }], {});
+      // Seeder for Admin
+     await queryInterface.bulkInsert('Users', [{
+       password: await bcrypt.hash('P@ssw0rd', 10),
+       email: 'admin@example.com',
+       fullname: 'Admin User',
+       username: 'admin',
+       roles: 'admin',
+       address: '456 Main Street',
+       city: 'Townsville',
+       state: 'Statetown',
+       country: 'Countrytown',
+       token: 'user_token',
+       expiredToken: new Date(),
+       createdAt: new Date(),
+       updatedAt: new Date(),
+     }], {});
+
+
+    // Seeder for Regular User
+     await queryInterface.bulkInsert('Users', [{
+       password: await bcrypt.hash('P@ssw0rd', 10),
+       email: 'user@example.com',
+       fullname: 'Regular User',
+       username: 'regularuser',
+       roles: 'user',
+       address: '456 Main Street',
+       city: 'Townsville',
+       state: 'Statetown',
+       country: 'Countrytown',
+       token: 'user_token',
+       expiredToken: new Date(),
+       createdAt: new Date(),
+       updatedAt: new Date(),
+     }], {});
   },
+  
 
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('Users', null, {});
