@@ -14,8 +14,7 @@ import HubIcon from '@mui/icons-material/Hub'
 import SettingsIcon from '@mui/icons-material/Settings'
 import PermContactCalendarRoundedIcon from '@mui/icons-material/PermContactCalendarRounded'
 import LogoutIcon from '@mui/icons-material/Logout'
-import useAuthStores from '../../stores/auth/Auth'
-
+import useAuthStores from '../../stores/auth/auth'
 // Link Router
 import { Link } from 'react-router-dom'
 

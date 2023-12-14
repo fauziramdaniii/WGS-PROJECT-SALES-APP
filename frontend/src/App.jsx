@@ -1,93 +1,78 @@
-// app.jsx
+// App.jsx
+import React, { useContext } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from 'react-router-dom'
+import AuthContext from './stores/auth/AuthContext'
 import Login from './pages/login/Login'
 import NotFound from './pages/FourOFour/NotFound'
 import Superadmin from './routes/Superadmin'
-// Routes
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-
-const tipeUser = { user: 'user', admin: 'admin', superadmin: 'superadmin' }
-const currentType = tipeUser.superadmin
+import Admin from './routes/Admin'
+import Visitor from './routes/Visitor'
+import withAuth from './routes/WithAuth'
 
 function App () {
+  const { userRole } = useContext(AuthContext)
+
   return (
     <div className='App'>
       <Router>
-        <div style={{ display: 'flex', gap: '12', padding: '8' }}>
-          <Link to='/superadmin'>superadmin</Link>
-          <Link to='/admin'>Admin</Link>
-          <Link to='/'>User</Link>
-          <div>You Are Login As: {currentType}</div>
-        </div>
-        <AppRoutes />
+        <Routes>
+          {/* Redirect to Login if userRole or token is null */}
+          <Route
+            path='/'
+            element={
+              userRole ? (
+                <Navigate to={`/${userRole}`} />
+              ) : (
+                <Navigate to='/login' />
+              )
+            }
+          />
+
+          {/* Login */}
+          <Route path='login' element={<Login />} />
+
+          {/* Protected Routes User*/}
+          <Route
+            path='user/*'
+            element={<ProtectedRoute Component={Visitor} userRole='user' />}
+          />
+
+          {/* Protected Routes Admin*/}
+          <Route
+            path='admin/*'
+            element={<ProtectedRoute Component={Admin} userRole='admin' />}
+          />
+
+          {/* Protected Routes Superadmin*/}
+          <Route
+            path='superadmin/*'
+            element={
+              <ProtectedRoute Component={Superadmin} userRole='superadmin' />
+            }
+          />
+
+          {/* NotFound */}
+          <Route path='*' element={<NotFound />} />
+        </Routes>
       </Router>
     </div>
   )
 }
 
-import React from 'react'
+// Wrap the ProtectedRoute component with withAuth HOC
+const ProtectedRoute = withAuth(({ Component, userRole }) => {
+  const { userRole: contextUserRole } = useContext(AuthContext)
 
-const AppRoutes = () => {
-  return (
-    <Routes>
-      <Route path='login' element={<Login />} />
-      {currentType === tipeUser.user ? (
-        <>
-          <Route path='/' element={<UserElement />}>
-            <Route index element={<User />} />
-          </Route>
-        </>
-      ) : null}
-
-      {currentType === tipeUser.admin ? (
-        <>
-          <Route path='admin' element={<AdminElement />}>
-            <Route index element={<Admin />} />
-          </Route>
-        </>
-      ) : null}
-
-      {currentType === tipeUser.superadmin ? (
-        <>
-          <Route path='superadmin/*' element={<SuperadminElement />}>
-            <Route index element={<Superadmin />} />
-          </Route>
-        </>
-      ) : null}
-      <Route path='*' element={<NotFound />} />
-    </Routes>
-  )
-}
-
-const Admin = () => {
-  return <div>Admin</div>
-}
-
-const User = () => {
-  return <div>User</div>
-}
-
-const UserElement = () => {
-  if (currentType === tipeUser.user) {
-    return <User />
-  } else {
-    return <NotFound />
+  if (!contextUserRole) {
+    return <Navigate to='/login' />
   }
-}
 
-const AdminElement = () => {
-  if (currentType === tipeUser.admin) {
-    return <Admin />
-  } else {
-    return <NotFound />
-  }
-}
-
-const SuperadminElement = () => {
-  if (currentType === tipeUser.superadmin) {
-    return <Superadmin />
-  } else {
-    return <NotFound />
-  }
-}
+  return contextUserRole === userRole ? <Component /> : <NotFound />
+})
 
 export default App

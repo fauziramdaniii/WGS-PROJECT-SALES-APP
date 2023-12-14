@@ -1,13 +1,15 @@
-// auth.jsx
-import { useState } from 'react'
+// Auth.jsx
+import { useState, useContext } from 'react'
 import apiService from '../../utils/apiService'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
+import AuthContext from './AuthContext'
 
 const useAuthStores = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const authContext = useContext(AuthContext)
 
   const postLogin = async () => {
     try {
@@ -17,8 +19,15 @@ const useAuthStores = () => {
       })
 
       if (response.status === 200) {
-        localStorage.setItem('token', response.data.result.token)
-        localStorage.setItem('expiredToken', response.data.result.expiredToken)
+        const { roles, token, expiredToken } = response.data.result
+
+        // Update the context value with the userRole
+        authContext.setUserRole(roles)
+
+        // Store userRole, token, and expiredToken in local storage
+        localStorage.setItem('roles', roles)
+        localStorage.setItem('token', token)
+        // localStorage.setItem('expiredToken', expiredToken)
 
         Swal.fire({
           title: 'HI Welcome Back!',
@@ -27,9 +36,8 @@ const useAuthStores = () => {
           timer: 2000
         })
 
-        console.log(response.data)
-        const userRole = response.data.result.roles
-        switch (userRole) {
+        // Redirect based on userRole
+        switch (roles) {
           case 'superadmin':
             navigate('/superadmin')
             break
@@ -60,14 +68,15 @@ const useAuthStores = () => {
     const token = localStorage.getItem('token')
     const expiredToken = localStorage.getItem('expiredToken')
 
-    const response = apiService.byPostData('auth/logout', {})
-    console.log(response)
     if (token || expiredToken) {
       apiService
         .byPostData('auth/logout', { token })
         .then(() => {
+          // Clear user role, token, and expiredToken from local storage and context
+          localStorage.removeItem('roles')
           localStorage.removeItem('token')
           localStorage.removeItem('expiredToken')
+          authContext.setUserRole(null)
 
           Swal.fire({
             title: 'Logged Out!',
@@ -82,16 +91,6 @@ const useAuthStores = () => {
         })
     }
   }
-
-  // const logout = () => {
-  //   localStorage.removeItem('token')
-  //   navigate('/login')
-  //   Swal.fire({
-  //     title: 'Logged Out!',
-  //     text: 'You have been successfully logged out.',
-  //     icon: 'success'
-  //   })
-  // }
 
   return { postLogin, handleSubmit, setEmail, setPassword, logout }
 }
