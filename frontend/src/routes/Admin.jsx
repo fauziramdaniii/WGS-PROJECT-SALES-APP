@@ -1,7 +1,6 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Home from '../pages/admin/home/Home'
-import Login from '../pages/login/Login'
 import List from '../pages/admin/lists/List'
 import Single from '../pages/admin/single/Single'
 import New from '../pages/admin/new/New'

@@ -22,7 +22,7 @@ function App () {
       <Router>
         <Routes>
           {/* Redirect to Login if userRole or token is null */}
-          <Route
+          {/* <Route
             path='/'
             element={
               userRole ? (
@@ -31,17 +31,16 @@ function App () {
                 <Navigate to='/login' />
               )
             }
-          />
+          /> */}
 
           {/* Login */}
           <Route path='login' element={<Login />} />
 
           {/* Protected Routes User*/}
           <Route
-            path='user/*'
+            path='/*'
             element={<ProtectedRoute Component={Visitor} userRole='user' />}
           />
-
           {/* Protected Routes Admin*/}
           <Route
             path='admin/*'
@@ -66,13 +65,11 @@ function App () {
 
 // Wrap the ProtectedRoute component with withAuth HOC
 const ProtectedRoute = withAuth(({ Component, userRole }) => {
-  const { userRole: contextUserRole } = useContext(AuthContext)
-
-  if (!contextUserRole) {
+  if (!userRole) {
     return <Navigate to='/login' />
   }
 
-  return contextUserRole === userRole ? <Component /> : <NotFound />
+  return userRole ? <Component /> : <NotFound />
 })
 
 export default App

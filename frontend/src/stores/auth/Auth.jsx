@@ -44,8 +44,9 @@ const useAuthStores = () => {
           case 'admin':
             navigate('/admin')
             break
-          default:
+          case 'user':
             navigate('/')
+            break
         }
       } else if (response.response.status === 401) {
         Swal.fire({
