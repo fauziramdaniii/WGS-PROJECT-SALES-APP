@@ -9,7 +9,7 @@ import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined'
 
 const Navbar = () => {
   return (
-    <div className='navbar'>
+    <div className='navbarAdmin'>
       <div className='wrapper'>
         <div className='search'>
           <input

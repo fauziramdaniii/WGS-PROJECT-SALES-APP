@@ -9,7 +9,12 @@ const Navbar = () => {
       <div className='container'>
         <NavLink className='navbar-brand fw-bold fs-4 px-2' to='/'>
           {' '}
-          React Ecommerce
+          <img
+            src='https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_nike_principal.jpg?20150128030207'
+            alt=''
+            srcset=''
+            style={{ height: '50px' }}
+          />
         </NavLink>
         <button
           className='navbar-toggler mx-2'

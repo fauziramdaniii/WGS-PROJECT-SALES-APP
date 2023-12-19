@@ -5,6 +5,7 @@ import Widget from '../../../components/widget/Widget'
 import Featured from '../../../components/featured/Featured'
 import Chart from '../../../components/chart/Chart'
 import BasicTable from '../../../components/table/Table'
+import DataTable from '../../../components/datatable/DataTable'
 
 const Home = () => {
   return (

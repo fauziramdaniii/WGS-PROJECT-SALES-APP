@@ -35,7 +35,6 @@ const useAuthStores = () => {
           icon: 'success',
           timer: 2000
         })
-
         // Redirect based on userRole
         switch (roles) {
           case 'superadmin':

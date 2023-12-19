@@ -10,12 +10,18 @@ import AuthContext from './stores/auth/AuthContext'
 import Login from './pages/login/Login'
 import NotFound from './pages/FourOFour/NotFound'
 import Superadmin from './routes/Superadmin'
-import Admin from './routes/Admin'
+// import Admin from './routes/Admin'
 import Visitor from './routes/Visitor'
 import withAuth from './routes/WithAuth'
 
 function App () {
   const { userRole } = useContext(AuthContext)
+
+  console.log(userRole + ' ie ayaan sih')
+
+  // if (userRole === null) {
+  //   return <>Loading...</>
+  // }
 
   return (
     <div className='App'>
@@ -39,19 +45,35 @@ function App () {
           {/* Protected Routes User*/}
           <Route
             path='/*'
-            element={<ProtectedRoute Component={Visitor} userRole='user' />}
+            element={
+              <ProtectedRoute
+                Component={Visitor}
+                userRole='user'
+                userRoleCtx={userRole}
+              />
+            }
           />
           {/* Protected Routes Admin*/}
-          <Route
+          {/* <Route
             path='admin/*'
-            element={<ProtectedRoute Component={Admin} userRole='admin' />}
-          />
+            element={
+              <ProtectedRoute
+                Component={Admin}
+                userRole='admin'
+                userRoleCtx={userRole}
+              />
+            }
+          /> */}
 
           {/* Protected Routes Superadmin*/}
           <Route
-            path='superadmin/*'
+            path='/superadmin/*'
             element={
-              <ProtectedRoute Component={Superadmin} userRole='superadmin' />
+              <ProtectedRoute
+                Component={Superadmin}
+                userRole='superadmin'
+                userRoleCtx={userRole}
+              />
             }
           />
 
@@ -63,13 +85,26 @@ function App () {
   )
 }
 
+// const ProtectedRoute = withAuth(({ Component, userRole, userRoleCtx }) => {
+//   console.log('protectedRoute ', userRoleCtx)
+//   if (!userRoleCtx) {
+//     return <Navigate to='/login' />
+//   }
+
+//   return userRole == userRoleCtx ? <Component /> : <NotFound />
+// })
+
 // Wrap the ProtectedRoute component with withAuth HOC
-const ProtectedRoute = withAuth(({ Component, userRole }) => {
-  if (!userRole) {
+const ProtectedRoute = withAuth(({ Component, userRole, userRoleCtx }) => {
+  const storedUserRoleFromLocalStorage = localStorage.getItem('roles')
+
+  if (!storedUserRoleFromLocalStorage) {
     return <Navigate to='/login' />
   }
-
-  return userRole ? <Component /> : <NotFound />
+  return userRole == storedUserRoleFromLocalStorage ? (
+    <Component />
+  ) : (
+    <NotFound />
+  )
 })
-
 export default App

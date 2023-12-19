@@ -20,6 +20,8 @@ import { Link } from 'react-router-dom'
 
 const Sidebar = () => {
   const { logout } = useAuthStores()
+  const role = localStorage.getItem('roles')
+  console.log(role)
   return (
     <div className='sidebar'>
       <div className='top'>
@@ -29,65 +31,76 @@ const Sidebar = () => {
       </div>
       <hr />
       <div className='center'>
-        <ul>
-          <p className='title'>MAIN</p>
-          <li>
-            <GridViewRoundedIcon className='icon' />
-            <span>Dashboard</span>
-          </li>
-          <p className='title'>LIST</p>
-          <Link to='/superadmin/users' style={{ textDecoration: 'none' }}>
+        {role === 'superadmin' && (
+          <ul>
+            <p className='title'>MAIN</p>
             <li>
-              <PersonRoundedIcon className='icon' />
-              <span>Users</span>
+              <GridViewRoundedIcon className='icon' />
+              <span>Dashboard</span>
             </li>
-          </Link>
-          <Link to='/superadmin/products' style={{ textDecoration: 'none' }}>
+            <p className='title'>LIST</p>
+            <Link to='/superadmin/users' style={{ textDecoration: 'none' }}>
+              <li>
+                <PersonRoundedIcon className='icon' />
+                <span>Users</span>
+              </li>
+            </Link>
+            <p className='title'>SERVICE</p>
             <li>
-              <ProductionQuantityLimitsIcon className='icon' />
-              <span>Product</span>
+              <HubIcon className='icon' />
+              <span>Logs</span>
             </li>
-          </Link>
-          <li>
-            <CreditCardIcon className='icon' />
-            <span>Orders</span>
-          </li>
-          <li>
-            <AccessibleForwardRoundedIcon className='icon' />
-            <span>Delivery</span>
-          </li>
-          <p className='title'>USEFULL</p>
-          <li>
-            <LeaderboardRoundedIcon className='icon' />
-            <span>Stats</span>
-          </li>
-          <li>
-            <CircleNotificationsRoundedIcon className='icon' />
-            <span>Notification</span>
-          </li>
-          <p className='title'>SERVICE</p>
-          <li>
-            <HealthAndSafetyRoundedIcon className='icon' />
-            <span>System Health</span>
-          </li>
-          <li>
-            <HubIcon className='icon' />
-            <span>Logs</span>
-          </li>
-          <li>
-            <SettingsIcon className='icon' />
-            <span>Setting</span>
-          </li>
-          <p className='title'>USER</p>
-          <li>
-            <PermContactCalendarRoundedIcon className='icon' />
-            <span>Profile</span>
-          </li>
-          <li>
-            <LogoutIcon className='icon' />
-            <span onClick={logout}>Logout</span>
-          </li>
-        </ul>
+            <p className='title'>USER</p>
+            <li>
+              <LogoutIcon className='icon' />
+              <span onClick={logout}>Logout</span>
+            </li>
+          </ul>
+        )}
+        {role === 'admin' && (
+          <ul>
+            <p className='title'>MAIN</p>
+            <li>
+              <GridViewRoundedIcon className='icon' />
+              <span>Dashboard</span>
+            </li>
+            <p className='title'>LIST</p>
+            <Link to='/admin/users' style={{ textDecoration: 'none' }}>
+              <li>
+                <PersonRoundedIcon className='icon' />
+                <span>Users</span>
+              </li>
+            </Link>
+            <Link to='/admin/products' style={{ textDecoration: 'none' }}>
+              <li>
+                <ProductionQuantityLimitsIcon className='icon' />
+                <span>Product</span>
+              </li>
+            </Link>
+            <li>
+              <CreditCardIcon className='icon' />
+              <span>Orders</span>
+            </li>
+            <p className='title'>SERVICE</p>
+            <li>
+              <HubIcon className='icon' />
+              <span>Logs</span>
+            </li>
+            <li>
+              <SettingsIcon className='icon' />
+              <span>Setting</span>
+            </li>
+            <p className='title'>USER</p>
+            <li>
+              <PermContactCalendarRoundedIcon className='icon' />
+              <span>Profile</span>
+            </li>
+            <li>
+              <LogoutIcon className='icon' />
+              <span onClick={logout}>Logout</span>
+            </li>
+          </ul>
+        )}
       </div>
       <div className='bottom'>
         <div className='colorOption'></div>
