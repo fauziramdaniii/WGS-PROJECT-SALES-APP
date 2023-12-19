@@ -14,7 +14,7 @@ import HubIcon from '@mui/icons-material/Hub'
 import SettingsIcon from '@mui/icons-material/Settings'
 import PermContactCalendarRoundedIcon from '@mui/icons-material/PermContactCalendarRounded'
 import LogoutIcon from '@mui/icons-material/Logout'
-import useAuthStores from '../../stores/auth/auth'
+import useAuthStores from '../../stores/auth/Auth'
 // Link Router
 import { Link } from 'react-router-dom'
 
@@ -71,16 +71,24 @@ const Sidebar = () => {
                 <span>Users</span>
               </li>
             </Link>
-            <Link to='/admin/products' style={{ textDecoration: 'none' }}>
+            <Link to='/admin/category' style={{ textDecoration: 'none' }}>
+              <li>
+                <LeaderboardRoundedIcon className='icon' />
+                <span>Category</span>
+              </li>
+            </Link>
+            <Link to='/admin/product' style={{ textDecoration: 'none' }}>
               <li>
                 <ProductionQuantityLimitsIcon className='icon' />
                 <span>Product</span>
               </li>
             </Link>
-            <li>
-              <CreditCardIcon className='icon' />
-              <span>Orders</span>
-            </li>
+            <Link to='/admin/order' style={{ textDecoration: 'none' }}>
+              <li>
+                <CreditCardIcon className='icon' />
+                <span>Orders</span>
+              </li>
+            </Link>
             <p className='title'>SERVICE</p>
             <li>
               <HubIcon className='icon' />

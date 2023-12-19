@@ -10,7 +10,7 @@ import AuthContext from './stores/auth/AuthContext'
 import Login from './pages/login/Login'
 import NotFound from './pages/FourOFour/NotFound'
 import Superadmin from './routes/Superadmin'
-// import Admin from './routes/Admin'
+import Admin from './routes/Admin'
 import Visitor from './routes/Visitor'
 import withAuth from './routes/WithAuth'
 
@@ -54,7 +54,7 @@ function App () {
             }
           />
           {/* Protected Routes Admin*/}
-          {/* <Route
+          <Route
             path='admin/*'
             element={
               <ProtectedRoute
@@ -63,7 +63,7 @@ function App () {
                 userRoleCtx={userRole}
               />
             }
-          /> */}
+          />
 
           {/* Protected Routes Superadmin*/}
           <Route

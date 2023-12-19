@@ -5,6 +5,7 @@ const useUserStore = () => {
   const getUser = async () => {
     try {
       const response = await apiService.byGetData('api/users')
+      console.log(response)
       return response
     } catch (error) {
       console.error('Error fetching users:', error)

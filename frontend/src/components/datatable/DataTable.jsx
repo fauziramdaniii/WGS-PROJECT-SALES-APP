@@ -19,7 +19,7 @@ const DataTable = () => {
   const [selectedUserEmail, setSelectedUserEmail] = useState('')
   useEffect(() => {
     fetchData()
-  }, [getUser])
+  }, [])
 
   const fetchData = async () => {
     try {

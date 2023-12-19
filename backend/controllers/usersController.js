@@ -145,7 +145,7 @@ const UserController = {
       const users = await User.findAll({
         where: {
           roles: {
-            [Op.notLike]: '%superadmin%' // Mengecualikan pengguna dengan roles "superadmin"
+            [Op.notLike]: '%superadmin%',
           }
         }
       })

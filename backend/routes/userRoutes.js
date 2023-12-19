@@ -3,6 +3,7 @@
 const express = require('express');
 const UserController = require('../controllers/usersController');
 const { createUserValidator } = require('../validator/userValidator'); // Import the validators
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
