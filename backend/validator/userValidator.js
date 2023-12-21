@@ -31,9 +31,6 @@ const updateUserValidator = [
   },
 ];
 
-// validators/resetPasswordValidator.js
-
-
 resetPasswordValidator = [
   body('email').isEmail().withMessage('Invalid email address'),
 ];

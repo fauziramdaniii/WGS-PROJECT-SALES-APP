@@ -4,10 +4,10 @@ import './datatable.scss'
 import { DataGrid } from '@mui/x-data-grid'
 import fetchUserData from './source'
 import { Link } from 'react-router-dom'
-import useUserStore from '../../stores/user/AddUserStore'
+import useUserStore from '../../../stores/user/AddUserStore'
 import Swal from 'sweetalert2'
-import AddUserFormModal from '../modal/AddUserFormModal'
-import ResetPasswordModal from '../modal/ResetPassword'
+import AddUserFormModal from '../../modal/user/AddUserFormModal'
+import ResetPasswordModal from '../../modal/user/ResetPassword'
 
 const DataTable = () => {
   const [data, setData] = useState([])

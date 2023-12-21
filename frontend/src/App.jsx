@@ -6,7 +6,7 @@ import {
   Route,
   Navigate
 } from 'react-router-dom'
-import AuthContext from './stores/auth/AuthContext'
+// import AuthContext from './stores/auth/AuthContext'
 import Login from './pages/login/Login'
 import NotFound from './pages/FourOFour/NotFound'
 import Superadmin from './routes/Superadmin'
@@ -15,9 +15,9 @@ import Visitor from './routes/Visitor'
 import withAuth from './routes/WithAuth'
 
 function App () {
-  const { userRole } = useContext(AuthContext)
+  // const { userRole } = useContext(AuthContext)
 
-  console.log(userRole + ' ie ayaan sih')
+  // console.log(userRole + ' ie ayaan sih')
 
   // if (userRole === null) {
   //   return <>Loading...</>
@@ -49,7 +49,7 @@ function App () {
               <ProtectedRoute
                 Component={Visitor}
                 userRole='user'
-                userRoleCtx={userRole}
+                // userRoleCtx={userRole}
               />
             }
           />
@@ -60,7 +60,7 @@ function App () {
               <ProtectedRoute
                 Component={Admin}
                 userRole='admin'
-                userRoleCtx={userRole}
+                // userRoleCtx={userRole}
               />
             }
           />
@@ -72,7 +72,7 @@ function App () {
               <ProtectedRoute
                 Component={Superadmin}
                 userRole='superadmin'
-                userRoleCtx={userRole}
+                // userRoleCtx={userRole}
               />
             }
           />

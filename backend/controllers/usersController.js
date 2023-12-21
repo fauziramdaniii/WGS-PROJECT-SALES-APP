@@ -1,17 +1,18 @@
-// userController
+// Package Required
 const { User } = require('../models/user')
 const bcrypt = require('bcrypt')
 const { Op } = require('sequelize')
+const nodemailer = require('nodemailer')
 
+// Import Validator From Dir Validator
 const {
   createUserValidator,
   updateUserValidator
-} = require('../validator/userValidator') // Import the validator
-const nodemailer = require('nodemailer')
+} = require('../validator/userValidator') 
 
-// Controller for handling CRUD operations
+
+// Function CRUD
 const UserController = {
-  // Create a new user
   createUser: [
     ...createUserValidator,
     async (req, res) => {
@@ -100,7 +101,6 @@ const UserController = {
     },
   ],
 
-  // Update a user by ID
   updateUser: [
     ...updateUserValidator,
     async (req, res) => {
@@ -139,7 +139,6 @@ const UserController = {
     }
   ],
 
-  // Get all users
   getUsers: async (req, res) => {
     try {
       const users = await User.findAll({
@@ -156,7 +155,6 @@ const UserController = {
     }
   },
 
-  // Get a specific user by ID
   getUserById: async (req, res) => {
     const userId = req.params.id
     try {
@@ -172,7 +170,6 @@ const UserController = {
     }
   },
 
-  // Delete a user by ID
   deleteUser: async (req, res) => {
     const userId = req.params.id
     try {
@@ -190,7 +187,6 @@ const UserController = {
     }
   },
 
-  // Reset Password
   resetPassword: async (req, res) => {
     try {
       const { email } = req.body

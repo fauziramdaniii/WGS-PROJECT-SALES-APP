@@ -3,6 +3,7 @@ const config = require('../config/config.json');
 
 const sequelize = new Sequelize(config[process.env.NODE_ENV || 'development']);
 const {Product} = require('./product')
+
 const Category = sequelize.define(
   'Category',
   {
@@ -20,7 +21,7 @@ const Category = sequelize.define(
 );
 
 // Establish the one-to-many relationship with Product
-Category.hasMany(Product, {foreignKey: "id_category"});
-Product.belongsTo(Category, {foreignKey: "id_category"});
+Category.hasMany(Product, { foreignKey: "id", as: 'products' });
+Product.belongsTo(Category, { foreignKey: "id_category", as: 'category' });
 
 module.exports = { Category };

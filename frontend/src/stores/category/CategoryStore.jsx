@@ -6,7 +6,7 @@ const useCategoryStore = () => {
   const getCategory = async () => {
     try {
       const response = await apiService.byGetData('api/category')
-      console.log(response)
+      // console.log(response)
       return response
     } catch (error) {
       console.error('Error fetching category:', error)
@@ -34,13 +34,18 @@ const useCategoryStore = () => {
     }
   }
 
-  const updateCategory = async id => {
+  const updateCategory = async (id, updatedData) => {
     try {
-      const response = await apiService.byPutData(`api/category/${id}`)
-      console.log(response)
+      const response = await apiService.byPutData(
+        `api/category/${id}`,
+        updatedData
+      )
+
+      console.log('Update category response:', response)
+
       return response
     } catch (error) {
-      console.error('Error Updating User:', error)
+      console.error('Error updating category:', error)
       throw error
     }
   }

@@ -10,8 +10,8 @@ const withAuth = WrappedComponent => {
       const token = localStorage.getItem('token')
       const roles = localStorage.getItem('roles')
 
-      console.log(token)
-      console.log(roles)
+      console.log(token, 'test')
+      console.log(roles, 'roles')
 
       if (!token || !roles) {
         navigate('/login')

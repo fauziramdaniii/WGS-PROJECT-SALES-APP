@@ -2,44 +2,45 @@
 import React, { useState, useEffect } from 'react'
 import './datatable.scss'
 import { DataGrid } from '@mui/x-data-grid'
-import fetchCategory from './source'
+import fetchProduct from './source'
 import { Link } from 'react-router-dom'
-import useCategoryStore from '../../../stores/category/CategoryStore'
 import Swal from 'sweetalert2'
-import AddModalCategory from '../../modal/category/AddModalCategory'
-import UpdateModalCategory from '../../modal/category/UpdateModalCategory'
+import useProductStore from '../../../stores/product/ProductStore'
+import AddModalProduct from '../../modal/product/AddModalProduct'
+import UpdateModalProduct from '../../modal/product/UpdateModalProduct'
+
 const DataTable = () => {
   const [data, setData] = useState([])
   const [columns, setColumns] = useState([])
   const [addOpenModal, setAddOpenModal] = useState(false)
   const [updateOpenModal, setUpdateOpenModal] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
-  const { getCategory, deleteCategory, createCategory, updateCategory } =
-    useCategoryStore()
+  const { getProduct, deleteProduct, updateProduct, createProduct } =
+    useProductStore()
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [getProduct])
 
   const fetchData = async () => {
     try {
-      const response = await getCategory()
-      const { categoryColoumn, categoryRows } = await fetchCategory(response)
+      const response = await getProduct()
+      const { productColoumn, productRows } = await fetchProduct(response)
 
       // Add unique ids to the rows, or set a specific id for error rows
-      const userRowsNumber = categoryRows?.map((category, index) => ({
-        ...category,
-        id: category.error ? `error_${index + 1}` : category.id || index + 1,
+      const userRowsNumber = productRows?.map((product, index) => ({
+        ...product,
+        id: product.error ? `error_${index + 1}` : product.id || index + 1,
         No: index + 1
       }))
 
-      setColumns(categoryColoumn)
+      setColumns(productColoumn)
       setData(userRowsNumber)
     } catch (error) {
       // Handle the error, and set a specific id for the error row
       console.error('Error fetching categories:', error)
-      setData([{ id: 'error', error: 'Category is Already Exist' }])
+      setData([{ id: 'error', error: 'Product is Already Exist' }])
     }
   }
 
@@ -56,23 +57,23 @@ const DataTable = () => {
       })
 
       if (confirmDelete.isConfirmed) {
-        await deleteCategory(id)
+        await deleteProduct(id)
         setData(prevData => prevData.filter(item => item.id !== id))
 
         Swal.fire({
           title: 'Deleted!',
-          text: 'Your category has been deleted.',
+          text: 'Your Product has been deleted.',
           icon: 'success'
         })
       }
     } catch (error) {
-      console.error('Error deleting category:', error)
+      console.error('Error deleting Product:', error)
     }
   }
 
-  const handleCreateCategory = async userData => {
+  const handleCreateProduct = async userData => {
     try {
-      const response = await createCategory(userData)
+      const response = await createProduct(userData)
 
       setData(prevData => [...prevData, response.data])
     } catch (error) {
@@ -80,27 +81,27 @@ const DataTable = () => {
     }
   }
 
-  const openModalCategory = () => {
+  const openModalProduct = () => {
     setAddOpenModal(true)
   }
 
-  const closeModalCategory = () => {
+  const closeModalProduct = () => {
     setAddOpenModal(false)
   }
 
-  const openUpdateModal = category => {
-    setSelectedCategory(category)
+  const openUpdateModal = product => {
+    setSelectedProduct(product)
     setUpdateOpenModal(true)
   }
 
   const closeUpdateModal = () => {
-    setSelectedCategory(null)
+    setSelectedProduct(null)
     setUpdateOpenModal(false)
   }
 
   const handleUpdate = async (id, updatedData) => {
     try {
-      await updateCategory(id, updatedData)
+      await updateProduct(id, updatedData)
       const updatedRows = data.map(row =>
         row.id === id ? { ...row, ...updatedData } : row
       )
@@ -108,11 +109,11 @@ const DataTable = () => {
 
       Swal.fire({
         title: 'Updated!',
-        text: 'Your category has been updated.',
+        text: 'Your product has been updated.',
         icon: 'success'
       })
     } catch (error) {
-      console.error('Error updating category:', error)
+      console.error('Error updating product:', error)
     }
   }
 
@@ -149,8 +150,8 @@ const DataTable = () => {
   return (
     <div className='datatable'>
       <div className='datatableTitle'>
-        Add Category
-        <button onClick={openModalCategory} className='link'>
+        Add Product
+        <button onClick={openModalProduct} className='link'>
           Add New
         </button>
       </div>
@@ -166,16 +167,16 @@ const DataTable = () => {
       ) : (
         <p>Loading...</p>
       )}
-      <AddModalCategory
+      <AddModalProduct
         isOpen={addOpenModal}
-        onClose={closeModalCategory}
-        onSubmit={handleCreateCategory}
+        onClose={closeModalProduct}
+        onSubmit={handleCreateProduct}
       />
-      <UpdateModalCategory
+      <UpdateModalProduct
         isOpen={updateOpenModal}
         onClose={closeUpdateModal}
         onUpdate={handleUpdate}
-        categoryData={selectedCategory}
+        productData={selectedProduct}
       />
     </div>
   )

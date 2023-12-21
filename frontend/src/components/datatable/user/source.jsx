@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import useUserStore from '../../stores/user/AddUserStore'
+import useUserStore from '../../../stores/user/AddUserStore'
 
 const fetchUserData = async () => {
   const { getUser } = useUserStore()
