@@ -6,11 +6,6 @@ const {Category} = require('../models/category')
 const createProduct = async (req, res) => {
   const { name, price, image, description, stock, id_category } = req.body;
   try {
-    // Check if the category exists
-    // const categoryExists = await Category.findByPk(id_category);
-    // if (!categoryExists) {
-    //   return res.status(400).json({ error: 'Category Doesnt Exists' });
-    // }
 
      const newProduct = await Product.create({
       name,

@@ -14,6 +14,9 @@ import ListCategory from '../pages/admin/category/lists/ListCategory'
 // Menu Product
 import ListProduct from '../pages/admin/products/lists/ListProduct'
 
+// Menu Order List
+import ListOrder from '../pages/admin/orders/lists/ListOrder'
+
 const Admin = () => {
   return (
     <Routes>
@@ -31,7 +34,7 @@ const Admin = () => {
         <Route path=':productId' element={<Single />} />
       </Route>
       <Route path='order'>
-        <Route index element={<List />} />
+        <Route index element={<ListOrder />} />
         <Route path=':orderId' element={<Single />} />
       </Route>
     </Routes>

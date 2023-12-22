@@ -18,15 +18,13 @@ const categoryRoutes = require('./routes/categoryRoute')
 const productRoutes = require('./routes/productRoute')
 const orderRoutes = require('./routes/orderRoutes')
 const cartRoutes = require('./routes/cartRoutes')
-
-
 // Routes Create
 app.use('/auth',  authRoute);
 app.use('/api', userRoute);
 app.use('/api', categoryRoutes);
 app.use('/api', productRoutes);
 app.use('/api', orderRoutes)
-app.use('/api', cartRoutes)
+app.use('/api', cartRoutes);
 
 // Listen Server
 const PORT = process.env.PORT || 3002;
