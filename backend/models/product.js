@@ -7,6 +7,12 @@ const sequelize = new Sequelize(config[process.env.NODE_ENV || 'development']);
 const Product = sequelize.define(
   'Product',
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,

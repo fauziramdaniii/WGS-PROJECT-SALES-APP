@@ -4,15 +4,24 @@ const useOrderStores = () => {
   const getOrder = async () => {
     try {
       const response = await apiService.byGetData('api/order')
-      // console.log(response)
-      return response
+      return response.data
     } catch (error) {
       console.error('Error fetching Order:', error)
       throw error
     }
   }
 
-  return { getOrder }
+  const getOrderProduct = async () => {
+    try {
+      const response = await apiService.byGetData('api/order/product')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching Order:', error)
+      throw error
+    }
+  }
+
+  return { getOrder, getOrderProduct }
 }
 
 export default useOrderStores

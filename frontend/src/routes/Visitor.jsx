@@ -3,7 +3,7 @@ import React from 'react'
 // import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import { Routes, Route } from 'react-router-dom'
 
-import withAuth from './WithAuth'
+// import withAuth from './WithAuth'
 import Home from '../pages/visitor/Home'
 import Product from '../pages/visitor/Product'
 import Products from '../pages/visitor/Products'
@@ -33,4 +33,4 @@ const Visitor = () => {
   )
 }
 
-export default withAuth(Visitor)
+export default Visitor

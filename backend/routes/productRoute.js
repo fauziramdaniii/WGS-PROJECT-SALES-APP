@@ -21,8 +21,10 @@ router.post('/products', validateProduct, upload.single('image'), productControl
 // Get all products
 router.get('/products', productController.getProducts);
 
+router.get('/products/:id', productController.getProductById);
+
 // Update a product by ID
-router.put('/products/:id', validateProduct, productController.updateProduct);
+router.put('/products/:id', validateProduct, productController.getProducts);
 
 // Delete a product by ID
 router.delete('/products/:id', productController.deleteProduct);

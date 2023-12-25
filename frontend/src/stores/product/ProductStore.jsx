@@ -11,6 +11,16 @@ const useProductStore = () => {
     }
   }
 
+  const getProductId = async id => {
+    try {
+      const response = await apiService.byGetData('api/products/' + id)
+      return response
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      throw error
+    }
+  }
+
   const deleteProduct = async id => {
     try {
       const response = await apiService.byDeleteData(`api/products/${id}`)
@@ -38,8 +48,6 @@ const useProductStore = () => {
         updatedData
       )
 
-      // console.log('Update product response:', response)
-
       return response
     } catch (error) {
       console.error('Error updating product:', error)
@@ -51,7 +59,8 @@ const useProductStore = () => {
     getProduct,
     createProduct,
     deleteProduct,
-    updateProduct
+    updateProduct,
+    getProductId
   }
 }
 

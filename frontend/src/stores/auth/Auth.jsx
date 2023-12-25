@@ -17,16 +17,18 @@ const useAuthStores = () => {
         email,
         password
       })
-
+      console.log(response)
       if (response.status === 200) {
-        const { roles, token, expiredToken } = response.data.result
-
+        const { roles, token, id } = response.data.result
+        console.log(id)
         // Update the context value with the userRole
         authContext.setUserRole(roles)
 
         // Store userRole, token, and expiredToken in local storage
         localStorage.setItem('roles', roles)
         localStorage.setItem('token', token)
+        localStorage.setItem('id_user', id)
+
         // localStorage.setItem('expiredToken', expiredToken)
 
         Swal.fire({

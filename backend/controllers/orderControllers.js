@@ -1,6 +1,7 @@
 const { Order } = require('../models/order');
 const { Product } = require('../models/product');
 const { Cart } = require('../models/cart');
+const { Sequelize } = require('sequelize')
 
 const orderController = {
   createOrder: async (req, res) => {
@@ -66,56 +67,83 @@ const orderController = {
     }
   },
 
-  getAllOrders: async (req, res) => {
-    try {
-      const orders = await Order.findAll({
-        include: [
-          {
-            model: Product,
-            as: 'product',
-            attributes: ['name', 'price', 'image'],
-          },
-          {
-            model: Cart,
-            as: 'carts',
-            attributes: ['quantity'],
-          },
-        ],
-      });
+ getOrderHeader: async (req, res) => {
+  try {
+    const ordersHeader = await Order.findAll({
+      attributes: [
+        'id_user',
+        [Sequelize.fn('SUM', Sequelize.col('quantity')), 'total_quantity'],
+        [Sequelize.fn('SUM', Sequelize.col('total_amount')), 'total_amount'],
+        'payment_method',
+      ],
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: [],
+        },
+      ],
+      group: ['id_user', 'payment_method'],
+    });
 
-      res.status(200).json({ success: true, data: orders });
+    res.status(200).json({ success: true, data: ordersHeader });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+},
+
+getOrderedProducts: async (req, res) => {
+  try {
+    const orderedProducts = await Order.findAll({
+      attributes: [
+        'id',
+        'id_user',
+        'id_product',
+        'order_date',
+        'status',
+        'total_amount',
+        'quantity',
+        'payment_method',
+      ],
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'price', 'image'],
+        },
+      ],
+      order: [['id_user', 'ASC']],
+    });
+
+    res.status(200).json({ success: true, data: orderedProducts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+},
+
+
+  deleteOrder: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Find the order by ID
+      const order = await Order.findByPk(id);
+      if (!order) {
+        return res.status(404).json({ success: false, error: 'Order not found' });
+      }
+
+      // Delete the order
+      await order.destroy();
+
+      res.status(200).json({ success: true, message: 'Order deleted successfully' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
   },
 
-  getOrdersByUserId: async (req, res) => {
-    try {
-      const { id_user } = req.params;
-
-      const orders = await Order.findAll({
-        where: { id_user },
-        include: [
-          {
-            model: Product,
-            as: 'product',
-            attributes: ['name', 'price', 'image'],
-          },
-          {
-            model: Cart,
-            as: 'carts',
-            attributes: ['quantity'],
-          },
-        ],
-      });
-
-      res.status(200).json({ success: true, data: orders });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, error: 'Internal Server Error' });
-    }
-  },
 };
 
 module.exports = orderController;

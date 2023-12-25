@@ -5,7 +5,8 @@ const orderController = require('../controllers/orderControllers');
 // Endpoint untuk membuat order
 router.post('/order', orderController.createOrder);
 router.put('/order/:id/status', orderController.updateOrderStatus);
-router.get('/order', orderController.getAllOrders)
-router.get('/orders/user/:id_user', orderController.getOrdersByUserId);
+router.get('/order', orderController.getOrderHeader)
+router.get('/order/product', orderController.getOrderedProducts)
+router.delete('/order/:id', orderController.deleteOrder)
 
 module.exports = router;

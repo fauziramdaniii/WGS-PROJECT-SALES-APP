@@ -16,18 +16,13 @@ router.post('/cart', cartValidator.createCart, async (req, res) => {
 });
 
 // Get all carts
-router.get('/cart', async (req, res) => {
-  cartController.getCart(req, res);
-});
+// router.get('/cart', async (req, res) => {
+//   cartController.getCart(req, res);
+// });
 
 router.get('/cart/:id', async (req, res) => {
   const { id } = req.params;
-  cartController.getCartById(req, res);
-});
-
-router.get('/cart/user/:id_user', async (req, res) => {
-  const { id_user } = req.params;
-  cartController.getCartsByUserId(req, res);
+  cartController.getCartByUserId(req, res);
 });
 
 // Update a cart by ID

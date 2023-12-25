@@ -23,11 +23,11 @@ const createProduct = async (req, res) => {
   }
 };
 
-
 // Get all products
 const getProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
+      attributes: ['id', 'name', 'price', 'image', 'description', 'stock', 'id_category'], // Menentukan atribut yang ingin ditampilkan
       include: [{
         model: Category,
         as: 'category',
@@ -76,7 +76,6 @@ const updateProduct = async (req, res) => {
   }
 };
 
-
 // Delete a product by ID
 const deleteProduct = async (req, res) => {
   const { id } = req.params;
@@ -86,6 +85,7 @@ const deleteProduct = async (req, res) => {
       where: {
         id: id,
       },
+      
     });
 
     if (deletedProduct === 0) {
@@ -99,10 +99,26 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getProductById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const product = await Product.findByPk(id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    // Kirim produk sebagai respons
+    res.status(200).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 module.exports = {
   createProduct,
   getProducts,
   updateProduct,
   deleteProduct,
+  getProductById
 };
