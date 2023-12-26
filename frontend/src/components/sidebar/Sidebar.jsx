@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom'
 const Sidebar = () => {
   const { logout } = useAuthStores()
   const role = localStorage.getItem('roles')
-  console.log(role)
+  // console.log(role)
   return (
     <div className='sidebar'>
       <div className='top'>

@@ -9,12 +9,15 @@ const handleCart = (state = cart, action) => {
     case 'ADDITEM':
       console.log('Handling ADDITEM action:', action.payload)
 
-      const exist = state.find(x => x.id === product.id)
-      if (exist) {
-        return state.map(x =>
-          x.id === product.id ? { ...x, qty: x.qty + 1 } : x
+      const existingProductIndex = state.findIndex(x => x.id === product.id)
+
+      if (existingProductIndex !== -1) {
+        // If product already exists in the cart, update quantity
+        return state.map((item, index) =>
+          index === existingProductIndex ? { ...item, qty: item.qty + 1 } : item
         )
       } else {
+        // If product doesn't exist, add it to the cart
         return [...state, { ...product, qty: 1 }]
       }
       break

@@ -10,19 +10,20 @@ const AboutPage = () => {
         <h1 className='text-center'>About Us</h1>
         <hr />
         <p className='lead text-center'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-          facere doloremque veritatis odit similique sequi. Odit amet fuga nam
-          quam quasi facilis sed doloremque saepe sint perspiciatis explicabo
-          totam vero quas provident ipsam, veritatis nostrum velit quos
-          recusandae est mollitia esse fugit dolore laudantium. Ex vel explicabo
-          earum unde eligendi autem praesentium, doloremque distinctio nesciunt
-          porro tempore quis eaque labore voluptatibus ea necessitatibus
-          exercitationem tempora molestias. Ad consequuntur veniam sequi ullam
-          tempore vel tenetur soluta dolore sunt maxime aliquam corporis est,
-          quo saepe dolorem optio minus sint nemo totam dolorum! Reprehenderit
-          delectus expedita a alias nam recusandae illo debitis repellat libero,
-          quasi explicabo molestiae saepe, dolorem tempore itaque eveniet quam
-          dignissimos blanditiis excepturi harum numquam vel nihil? Ipsum
+          Andromeda Urban Trends is a fashion destination that seamlessly blends
+          urban contemporary style with innovative futuristic touches. Located
+          in the bustling city center, this store offers a unique and enjoyable
+          shopping experience for visitors looking to stay stylish and
+          up-to-date. With a modern and attractive interior design, Andromeda
+          Urban Trends creates a captivating atmosphere. Thoughtfully designed
+          racks organize the latest clothing and accessories collections, making
+          it easy for customers to find fashion items that suit their style. We
+          present a diverse range of choices from well-known brands to
+          up-and-coming local designers, giving customers the opportunity to
+          explore various styles and fashion trends. Andromeda Urban Trends also
+          proudly features exclusive collections that cannot be found elsewhere,
+          providing customers with an exclusive and individual shopping
+          experience.
         </p>
 
         <h2 className='text-center py-4'>Our Products</h2>
@@ -33,7 +34,7 @@ const AboutPage = () => {
                 className='card-img-top img-fluid'
                 src='https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?auto=compress&cs=tinysrgb&w=600'
                 alt=''
-                height={160}
+                style={{ height: '400px', objectFit: 'cover' }}
               />
               <div className='card-body'>
                 <h5 className='card-title text-center'>Mens's Clothing</h5>
@@ -46,7 +47,7 @@ const AboutPage = () => {
                 className='card-img-top img-fluid'
                 src='https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=600'
                 alt=''
-                height={160}
+                style={{ height: '400px', objectFit: 'cover' }}
               />
               <div className='card-body'>
                 <h5 className='card-title text-center'>Women's Clothing</h5>
@@ -59,7 +60,7 @@ const AboutPage = () => {
                 className='card-img-top img-fluid'
                 src='https://images.pexels.com/photos/1927259/pexels-photo-1927259.jpeg?auto=compress&cs=tinysrgb&w=600'
                 alt=''
-                height={160}
+                style={{ height: '400px', objectFit: 'cover' }}
               />
               <div className='card-body'>
                 <h5 className='card-title text-center'>Jewelery</h5>
@@ -72,7 +73,7 @@ const AboutPage = () => {
                 className='card-img-top img-fluid'
                 src='https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=600'
                 alt=''
-                height={160}
+                style={{ height: '400px', objectFit: 'cover' }}
               />
               <div className='card-body'>
                 <h5 className='card-title text-center'>Electronics</h5>

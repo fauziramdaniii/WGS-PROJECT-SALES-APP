@@ -14,12 +14,14 @@ import Login from '../pages/visitor/Login'
 import Register from '../pages/visitor/Register'
 import Checkout from '../pages/visitor/Checkout'
 import PageNotFound from '../pages/visitor/PageNotFound'
+import Order from '../pages/visitor/Order'
 
 const Visitor = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/product' element={<Products />} />
+      <Route path='/order' element={<Order />} />
       <Route path='/product/:id' element={<Product />} />
       <Route path='/about' element={<AboutPage />} />
       <Route path='/contact' element={<ContactPage />} />

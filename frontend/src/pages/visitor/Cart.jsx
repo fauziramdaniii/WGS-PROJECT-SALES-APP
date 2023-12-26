@@ -41,12 +41,30 @@ const Cart = () => {
   const collectAtStore = async () => {
     try {
       // Confirm order with SweetAlert
+      const termsAndConditions = `
+    <div style="text-align: left; font-size: 14px; padding: 5px;">
+        <p>Transaksi dilakukan di Andromeda Stores Jl. Soekarno-Hatta No. 456 Bandung</p>
+        <p>Untuk pengambilan barang, wajib Konsumen langsung yang datang, sesuai dengan data pemesanan dan tidak dapat diwakilkan.</p>
+        <p>Untuk melakukan pengambilan barang, Konsumen wajib membawa 2 (dua) dokumen sebagai berikut :</p>
+        <ol style="margin-left: 20px;">
+          <li>KTP asli Pembeli / Pemesan.</li>
+          <li>Booking dan Order Invoice item yang berisi produk yang dipesan (softcopy / hardcopy) yang Konsumen dapatkan melalui email.</li>
+        </ol>
+        <p>Transaksi pembayaran yang sudah berhasil tidak dapat dibatalkan dengan alasan apapun (termasuk pembatalan dengan pengembalian uang).</p>
+        <p>Untuk tipe produk yang sama, harga yang ada di Andromeda Stores bisa berbeda dengan yang berlaku ketika data product dilakukan Update</p>
+        <p>Setiap barang yang diambil di Toko wajib dilakukan unboxing. Jika tidak, maka Andromeda Stores tidak bertanggungjawab apabila ada kerusakan pabrikan.</p>
+        <p>Andromeda Stores berhak mengubah Syarat & Ketentuan dengan atau tanpa pemberitahuan terlebih dahulu</p>
+        <p>Andromeda Stores berhak membatalkan transaksi yang tidak sesuai dengan Syarat & Ketentuan</p>
+    </div>
+`
+      // Then use termsAndConditions in your Swal.fire configuration
       const result = await Swal.fire({
         title: 'Do you want to place the order?',
+        html: termsAndConditions,
         showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-        icon: 'question'
+        confirmButtonText: 'Order',
+        cancelButtonText: 'Next Time',
+        width: '70%' // Set the width as needed
       })
 
       if (!result.isConfirmed) {
@@ -54,8 +72,9 @@ const Cart = () => {
       }
 
       // Send order to API
+      const idUser = localStorage.getItem('id_user')
       const response = await axios.post('http://localhost:3000/api/order', {
-        id_user: 2,
+        id_user: idUser,
         id_product: state[0].cart.id_product,
         quantity: state[0].qty,
         payment_method: 'cash',

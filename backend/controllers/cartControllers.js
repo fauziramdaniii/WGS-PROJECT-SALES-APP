@@ -5,7 +5,7 @@ const { User } = require('../models/user');
 const { Order } = require('../models/order')
  
 const cartController = {
-     createCart: async (req, res) => {
+    createCart: async (req, res) => {
     try {
       const { quantity } = req.body;
       const id_user = req.body.id_user; // Assuming user ID is available in the request
