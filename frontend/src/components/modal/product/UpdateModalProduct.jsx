@@ -6,6 +6,8 @@ import useCategoryStore from '../../../stores/category/CategoryStore'
 const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
   const [updatedData, setUpdatedData] = useState(productData || {})
   const [categories, setCategories] = useState([])
+  const [imageFile, setImageFile] = useState(null)
+
   const { getCategory } = useCategoryStore()
 
   useEffect(() => {
@@ -30,9 +32,15 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
     }))
   }
 
+  const handleImageChange = e => {
+    const file = e.target.files[0]
+    console.log(file)
+    setImageFile(file)
+  }
+
   const handleSubmit = e => {
     e.preventDefault()
-    onUpdate(productData.id, updatedData)
+    onUpdate(productData.id, updatedData, imageFile) // Pass the imageFile to the onUpdate function
     onClose()
   }
 
@@ -67,14 +75,14 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
                   required
                 />
               </Form.Group>
-              <Form.Group className='mb-3' controlId='image'>
+              <Form.Group controlId='image' className='mb-3'>
                 <Form.Label>Image</Form.Label>
                 <Form.Control
                   type='file'
                   name='image'
                   accept='image/*' // Allow only image files
-                  enctype='multipart/form-data'
-                  onChange={handleChange}
+                  encType='multipart/form-data'
+                  onChange={handleImageChange}
                 />
               </Form.Group>
             </div>

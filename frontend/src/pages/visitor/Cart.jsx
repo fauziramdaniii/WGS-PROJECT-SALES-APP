@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Footer from '../../components/visitor/Footer'
 import Navbar from '../../components/visitor/Navbar'
 import { useSelector, useDispatch } from 'react-redux'
@@ -6,9 +6,14 @@ import { addCart, delCart } from '../../redux/action/action'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import useTermAndConditionStores from '../../stores/termCondition/TermAndConditionStores'
+
 const Cart = () => {
   const state = useSelector(state => state.handleCart)
-  console.log(state)
+  // console.log(state)
+
+  const { getTerm } = useTermAndConditionStores()
+
   const dispatch = useDispatch()
 
   const EmptyCart = () => {
@@ -41,25 +46,12 @@ const Cart = () => {
   const collectAtStore = async () => {
     try {
       // Confirm order with SweetAlert
-      const termsAndConditions = `
-    <div style="text-align: left; font-size: 14px; padding: 5px;">
-        <p>Transaksi dilakukan di Andromeda Stores Jl. Soekarno-Hatta No. 456 Bandung</p>
-        <p>Untuk pengambilan barang, wajib Konsumen langsung yang datang, sesuai dengan data pemesanan dan tidak dapat diwakilkan.</p>
-        <p>Untuk melakukan pengambilan barang, Konsumen wajib membawa 2 (dua) dokumen sebagai berikut :</p>
-        <ol style="margin-left: 20px;">
-          <li>KTP asli Pembeli / Pemesan.</li>
-          <li>Booking dan Order Invoice item yang berisi produk yang dipesan (softcopy / hardcopy) yang Konsumen dapatkan melalui email.</li>
-        </ol>
-        <p>Transaksi pembayaran yang sudah berhasil tidak dapat dibatalkan dengan alasan apapun (termasuk pembatalan dengan pengembalian uang).</p>
-        <p>Untuk tipe produk yang sama, harga yang ada di Andromeda Stores bisa berbeda dengan yang berlaku ketika data product dilakukan Update</p>
-        <p>Setiap barang yang diambil di Toko wajib dilakukan unboxing. Jika tidak, maka Andromeda Stores tidak bertanggungjawab apabila ada kerusakan pabrikan.</p>
-        <p>Andromeda Stores berhak mengubah Syarat & Ketentuan dengan atau tanpa pemberitahuan terlebih dahulu</p>
-        <p>Andromeda Stores berhak membatalkan transaksi yang tidak sesuai dengan Syarat & Ketentuan</p>
-    </div>
-`
-      // Then use termsAndConditions in your Swal.fire configuration
+      const responseTerm = await getTerm()
+      const termsAndConditions = responseTerm.data[0].content
+
+      // Confirm order with SweetAlert
       const result = await Swal.fire({
-        title: 'Do you want to place the order?',
+        title: responseTerm.data[0].title,
         html: termsAndConditions,
         showCancelButton: true,
         confirmButtonText: 'Order',

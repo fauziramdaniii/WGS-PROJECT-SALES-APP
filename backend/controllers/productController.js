@@ -2,6 +2,8 @@
 const { Product } = require('../models/product');
 const { validationResult } = require('express-validator');
 const {Category} = require('../models/category')
+const { logActivity } = require('../utils/logactivity')
+
 // Create a new product
 const createProduct = async (req, res) => {
   const { name, price, image, description, stock, id_category } = req.body;
@@ -16,6 +18,15 @@ const createProduct = async (req, res) => {
       image: req.file.filename  // Assuming you use `multer` for file uploads
     });
 
+    await logActivity({
+        timestamp: new Date(),
+        activityType: 'Add Product',
+        user: 'id_user',
+        details: 'Add Product',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+    });
     res.status(201).json(newProduct);
   } catch (error) {
     console.error(error);
@@ -63,12 +74,11 @@ const updateProduct = async (req, res) => {
     await updatedProduct.update({
       name,
       price,
-      image,
+      image: req.file.filename,
       description,
       stock,
       id_category,
     });
-
     res.status(200).json(updatedProduct);
   } catch (error) {
     console.error(error);
@@ -79,7 +89,6 @@ const updateProduct = async (req, res) => {
 // Delete a product by ID
 const deleteProduct = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   try {
     const deletedProduct = await Product.destroy({
       where: {

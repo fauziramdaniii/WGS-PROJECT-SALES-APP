@@ -38,6 +38,7 @@ const AddModalProduct = ({ isOpen, onClose, onSubmit }) => {
 
   const handleImageChange = e => {
     const file = e.target.files[0]
+    console.log(file)
     setImageFile(file)
   }
 
@@ -148,7 +149,7 @@ const AddModalProduct = ({ isOpen, onClose, onSubmit }) => {
                   type='file'
                   name='image'
                   accept='image/*' // Allow only image files
-                  enctype='multipart/form-data'
+                  encType='multipart/form-data'
                   onChange={handleImageChange}
                 />
               </Form.Group>

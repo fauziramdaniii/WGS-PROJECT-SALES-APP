@@ -8,6 +8,8 @@ import useUserStore from '../../../stores/user/AddUserStore'
 import Swal from 'sweetalert2'
 import AddUserFormModal from '../../modal/user/AddUserFormModal'
 import ResetPasswordModal from '../../modal/user/ResetPassword'
+import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
 
 const DataTable = () => {
   const [data, setData] = useState([])
@@ -95,9 +97,9 @@ const DataTable = () => {
       width: 300,
       renderCell: params => (
         <div className='cellAction'>
-          <Link to='/superadmin/users/test' style={{ textDecoration: 'none' }}>
+          {/* <Link to='/superadmin/users/test' style={{ textDecoration: 'none' }}>
             <div className='viewButton'>View</div>
-          </Link>
+          </Link> */}
           <div
             className='deleteButton'
             onClick={() => handleDelete(params.row.id)}
@@ -123,14 +125,22 @@ const DataTable = () => {
           Add New
         </button>
       </div>
-      <DataGrid
-        className='datagrid'
-        rows={data}
-        columns={columns.concat(actionColumn)}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-      />
+      {data.length > 0 ? (
+        <DataGrid
+          className='datagrid'
+          rows={data}
+          columns={columns.concat(actionColumn)}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
+        />
+      ) : (
+        <p style={{ textAlign: 'center', marginTop: '200px' }}>
+          <Box size='large'>
+            <CircularProgress />
+          </Box>
+        </p>
+      )}
       <AddUserFormModal
         isOpen={isAddUserModalOpen}
         onClose={handleCloseAddUserModal}

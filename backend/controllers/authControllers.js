@@ -2,9 +2,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/user');
+const { logActivity } = require('../utils/logactivity')
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const {  email, password } = req.body;
 
   try {
     const user = await User.findOne({
@@ -28,6 +29,16 @@ const login = async (req, res) => {
     user.token = token;
 
     const { password: userPass, ...filteredData } = user.toJSON();
+
+      await logActivity({
+      timestamp: new Date(),
+      activityType: 'Login',
+      user: user.id,
+      details: 'Login successful',
+      ipAddress: req.ip,
+      device: req.headers['user-agent'],
+      status: 'Success',
+    });
 
     res.status(200).json({ result: filteredData, message: 'Login Succesfull' });
   } catch (error) {

@@ -1,6 +1,7 @@
 // controllers/categoryController.js
 const { Category } = require('../models/category');
 const { validationResult } = require('express-validator');
+const { logActivity } = require('../utils/logactivity')
 
 getAllCategories = async (req, res) => {
   try {
@@ -41,11 +42,30 @@ createCategory = async (req, res) => {
       return res.json({error: 'Category is Already Exist'});
     }
 
+    await logActivity({
+        timestamp: new Date(),
+        activityType: 'Add Category',
+        user: 'id_user',
+        details: 'Add Category',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+      });
+
     // Jika kategori belum ada, buat dan kirim respons berhasil
     const newCategory = await Category.create({ name });
     res.status(201).json(newCategory);
   } catch (error) {
     console.error(error);
+    await logActivity({
+        timestamp: new Date(),
+        activityType: 'Add Category',
+        user: 'id_user',
+        details: 'Add Category',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Failed',
+      });
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

@@ -25,9 +25,16 @@ const Sidebar = () => {
   return (
     <div className='sidebar'>
       <div className='top'>
-        <Link to='/superadmin' style={{ textDecoration: 'none' }}>
-          <span className='logo'>Admin App</span>
-        </Link>
+        {role === 'superadmin' && (
+          <Link to='/superadmin' style={{ textDecoration: 'none' }}>
+            <span className='logo'>Admin App</span>
+          </Link>
+        )}
+        {role === 'admin' && (
+          <Link to='/admin' style={{ textDecoration: 'none' }}>
+            <span className='logo'>Admin App</span>
+          </Link>
+        )}
       </div>
       <hr />
       <div className='center'>
@@ -90,14 +97,18 @@ const Sidebar = () => {
               </li>
             </Link>
             <p className='title'>SERVICE</p>
-            <li>
-              <HubIcon className='icon' />
-              <span>Logs</span>
-            </li>
-            <li>
-              <SettingsIcon className='icon' />
-              <span>Setting</span>
-            </li>
+            <Link to='/admin/log' style={{ textDecoration: 'none' }}>
+              <li>
+                <HubIcon className='icon' />
+                <span>Logs</span>
+              </li>
+            </Link>
+            <Link to='/admin/term-condition' style={{ textDecoration: 'none' }}>
+              <li>
+                <SettingsIcon className='icon' />
+                <span>Term Condition</span>
+              </li>
+            </Link>
             <p className='title'>USER</p>
             <li>
               <PermContactCalendarRoundedIcon className='icon' />

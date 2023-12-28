@@ -2,6 +2,7 @@ const { Order } = require('../models/order');
 const { Product } = require('../models/product');
 const { Cart } = require('../models/cart');
 const { Sequelize } = require('sequelize')
+const { logActivity } = require('../utils/logactivity')
 
 const orderController = {
   createOrder: async (req, res) => {
@@ -34,6 +35,16 @@ const orderController = {
       // Hapus entri keranjang yang terkait dengan pesanan
       await Cart.destroy({ where: { id_user, id_product } });
 
+      await logActivity({
+        timestamp: new Date(),
+        activityType: 'Add Order',
+        user: id_user,
+        details: 'Add Order',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+      });
+
       res.status(201).json({ success: true, data: order });
     } catch (error) {
       console.error(error);
@@ -59,6 +70,16 @@ const orderController = {
 
       // Update status
       await order.update({ status: [status] }); // Perubahan di sini, pastikan status dikirimkan dalam bentuk array
+
+       await logActivity({
+        timestamp: new Date(),
+        activityType: 'Update Order',
+        user: 'id_user',
+        details: 'Update Order',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+      });
 
       res.status(200).json({ success: true, message: 'Order status updated successfully', data: order });
     } catch (error) {

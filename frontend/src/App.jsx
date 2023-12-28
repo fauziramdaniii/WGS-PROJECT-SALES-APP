@@ -7,6 +7,7 @@ import Admin from './routes/Admin'
 import Visitor from './routes/Visitor'
 import withAuth from './routes/WithAuth'
 import Login from './pages/login/Login'
+import { Navigate } from 'react-router-dom'
 
 function App () {
   return (

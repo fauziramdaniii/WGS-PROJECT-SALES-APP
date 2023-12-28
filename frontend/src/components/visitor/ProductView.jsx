@@ -11,6 +11,7 @@ const Products = () => {
   const [data, setData] = useState([])
   const [filter, setFilter] = useState(data)
   const [loading, setLoading] = useState(false)
+  const [showFullDescription, setShowFullDescription] = useState({})
   let componentMounted = true
 
   const dispatch = useDispatch()
@@ -77,6 +78,14 @@ const Products = () => {
     setFilter(updatedList)
   }
 
+  // Function to toggle the display of full description
+  const toggleDescription = productId => {
+    setShowFullDescription(prevShowFullDescription => ({
+      ...prevShowFullDescription,
+      [productId]: !prevShowFullDescription[productId]
+    }))
+  }
+
   const ShowProducts = () => {
     return (
       <>
@@ -122,7 +131,24 @@ const Products = () => {
               />
               <div className='card-body'>
                 <h5 className='card-title'>{product.name}</h5>
-                <p className='card-text'>{product.description}</p>
+                <p className='card-text'>
+                  {
+                    product.description.length > 50
+                      ? // Show "More" button only for descriptions with more than 50 characters
+                        showFullDescription[product.id]
+                        ? product.description // Show full description
+                        : `${product.description.slice(0, 70)}...` // Truncate description
+                      : product.description // Show short description as is
+                  }
+                  {product.description.length > 50 && (
+                    <button
+                      className='btn btn-link btn-sm'
+                      onClick={() => toggleDescription(product.id)}
+                    >
+                      {showFullDescription[product.id] ? 'Hide' : 'More'}
+                    </button>
+                  )}
+                </p>
               </div>
               <ul className='list-group list-group-flush'>
                 <li className='list-group-item lead'>

@@ -77,7 +77,7 @@ const useAuthStores = () => {
           // Clear user role, token, and expiredToken from local storage and context
           localStorage.removeItem('roles')
           localStorage.removeItem('token')
-          localStorage.removeItem('expiredToken')
+          localStorage.removeItem('id_user')
           authContext.setUserRole(null)
 
           Swal.fire({

@@ -3,6 +3,7 @@ const { User } = require('../models/user')
 const bcrypt = require('bcrypt')
 const { Op } = require('sequelize')
 const nodemailer = require('nodemailer')
+const { logActivity } = require('../utils/logactivity')
 
 // Import Validator From Dir Validator
 const {
@@ -55,6 +56,16 @@ const UserController = {
 
         sendNewUserByEmail(newUser.email, userResponse, password)
 
+        await logActivity({
+        timestamp: new Date(),
+        activityType: 'Add User',
+        user: 'id_user',
+        details: 'Add User',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+    });
+    
         res.status(201).json(userResponse)
       } catch (error) {
         console.error(error)

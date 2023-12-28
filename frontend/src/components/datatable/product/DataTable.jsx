@@ -8,6 +8,8 @@ import Swal from 'sweetalert2'
 import useProductStore from '../../../stores/product/ProductStore'
 import AddModalProduct from '../../modal/product/AddModalProduct'
 import UpdateModalProduct from '../../modal/product/UpdateModalProduct'
+import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
 
 const DataTable = () => {
   const [data, setData] = useState([])
@@ -21,7 +23,7 @@ const DataTable = () => {
 
   useEffect(() => {
     fetchData()
-  }, [getProduct])
+  }, [])
 
   const fetchData = async () => {
     try {
@@ -99,9 +101,23 @@ const DataTable = () => {
     setUpdateOpenModal(false)
   }
 
-  const handleUpdate = async (id, updatedData) => {
+  const handleUpdate = async (id, updatedData, imageFile) => {
     try {
-      await updateProduct(id, updatedData)
+      // Create a FormData object to handle both text and file data
+      const formData = new FormData()
+
+      // Append text data
+      Object.keys(updatedData).forEach(key => {
+        formData.append(key, updatedData[key])
+      })
+
+      // Append the image file if it exists
+      if (imageFile) {
+        formData.append('image', imageFile)
+      }
+
+      await updateProduct(id, formData) // Pass the FormData object to the updateProduct function
+
       const updatedRows = data.map(row =>
         row.id === id ? { ...row, ...updatedData } : row
       )
@@ -124,12 +140,12 @@ const DataTable = () => {
       width: 300,
       renderCell: params => (
         <div className='cellAction'>
-          <Link
+          {/* <Link
             to={`/superadmin/users/${params.row.id}`}
             style={{ textDecoration: 'none' }}
           >
             <div className='viewButton'>View</div>
-          </Link>
+          </Link> */}
           <div
             className='deleteButton'
             onClick={() => handleDelete(params.row.id)}
@@ -137,7 +153,7 @@ const DataTable = () => {
             Delete
           </div>
           <div
-            className='deleteButton'
+            className='updateButton'
             onClick={() => openUpdateModal(params.row)}
           >
             Edit
@@ -165,7 +181,11 @@ const DataTable = () => {
           checkboxSelection
         />
       ) : (
-        <p>Loading...</p>
+        <p style={{ textAlign: 'center', marginTop: '200px' }}>
+          <Box size='large'>
+            <CircularProgress />
+          </Box>
+        </p>
       )}
       <AddModalProduct
         isOpen={addOpenModal}

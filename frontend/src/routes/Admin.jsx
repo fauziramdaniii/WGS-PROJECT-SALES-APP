@@ -17,6 +17,12 @@ import ListProduct from '../pages/admin/products/lists/ListProduct'
 // Menu Order List
 import ListOrder from '../pages/admin/orders/lists/ListOrder'
 
+// Menu Log
+import ListLog from '../pages/admin/log/lists/listLog'
+
+// Menu Term n Condition
+import ListTerm from '../pages/admin/termCondition/lists/ListTerm'
+
 const Admin = () => {
   return (
     <Routes>
@@ -35,6 +41,14 @@ const Admin = () => {
       </Route>
       <Route path='order'>
         <Route index element={<ListOrder />} />
+        <Route path=':orderId' element={<Single />} />
+      </Route>
+      <Route path='log'>
+        <Route index element={<ListLog />} />
+        <Route path=':orderId' element={<Single />} />
+      </Route>
+      <Route path='term-condition'>
+        <Route index element={<ListTerm />} />
         <Route path=':orderId' element={<Single />} />
       </Route>
     </Routes>

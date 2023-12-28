@@ -8,6 +8,9 @@ import useCategoryStore from '../../../stores/category/CategoryStore'
 import Swal from 'sweetalert2'
 import AddModalCategory from '../../modal/category/AddModalCategory'
 import UpdateModalCategory from '../../modal/category/UpdateModalCategory'
+import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
+
 const DataTable = () => {
   const [data, setData] = useState([])
   const [columns, setColumns] = useState([])
@@ -123,12 +126,12 @@ const DataTable = () => {
       width: 300,
       renderCell: params => (
         <div className='cellAction'>
-          <Link
+          {/* <Link
             to={`/superadmin/users/${params.row.id}`}
             style={{ textDecoration: 'none' }}
           >
             <div className='viewButton'>View</div>
-          </Link>
+          </Link> */}
           <div
             className='deleteButton'
             onClick={() => handleDelete(params.row.id)}
@@ -164,7 +167,11 @@ const DataTable = () => {
           checkboxSelection
         />
       ) : (
-        <p>Loading...</p>
+        <p style={{ textAlign: 'center', marginTop: '200px' }}>
+          <Box size='large'>
+            <CircularProgress />
+          </Box>
+        </p>
       )}
       <AddModalCategory
         isOpen={addOpenModal}

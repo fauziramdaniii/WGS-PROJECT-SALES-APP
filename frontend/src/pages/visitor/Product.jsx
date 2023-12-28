@@ -13,6 +13,7 @@ const Product = () => {
   const { id } = useParams()
   const [product, setProduct] = useState([])
   const [loading, setLoading] = useState(false)
+  const [showFullDescription, setShowFullDescription] = useState({})
 
   const { getProductId } = useProductStore()
 
@@ -33,6 +34,7 @@ const Product = () => {
         console.log(response)
 
         const data = await response.data
+        console.log(data, 'apa nich')
         setProduct(data)
         setLoading(false)
       } catch (error) {
@@ -42,6 +44,22 @@ const Product = () => {
 
     getProduct()
   }, [id])
+
+  const toggleDescription = productId => {
+    setShowFullDescription(prevShowFullDescription => ({
+      ...prevShowFullDescription,
+      [productId]: !prevShowFullDescription[productId]
+    }))
+  }
+
+  const formatToRupiah = amount => {
+    const formatter = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 2
+    })
+    return formatter.format(amount)
+  }
 
   const Loading = () => {
     return (
@@ -83,14 +101,51 @@ const Product = () => {
             </div>
             <div className='col-md-6 col-md-6 py-5'>
               <h4 className='text-uppercase text-muted'>{product.category}</h4>
-              <h1 className='display-5'>{product.name}</h1>
-              <h3 className='display-6  my-4'>IDR {product.price}</h3>
-              <p className='lead'>{product.description}</p>
+              <h6 className='display-6'>{product.name}</h6>
+              <h1 className='display-5 my-4 font-weight-bold text-uppercase'>
+                {formatToRupiah(product.price)}
+              </h1>
+              <p className='card-text'>
+                {
+                  product.description &&
+                    (product.description.length > 50
+                      ? // Show "More" button only for descriptions with more than 50 characters
+                        showFullDescription[product.id]
+                        ? product.description // Show full description
+                        : `${product.description.slice(0, 70)}...` // Truncate description
+                      : product.description) // Show short description as is
+                }
+                {product.description && product.description.length > 50 && (
+                  <button
+                    className='btn btn-link btn-sm'
+                    onClick={() => toggleDescription(product.id)}
+                  >
+                    {showFullDescription[product.id] ? 'Hide' : 'More'}
+                  </button>
+                )}
+              </p>
+              <div className='my-3'>
+                {product.stock > 0 ? (
+                  product.stock < 5 ? (
+                    <span className='text-danger'>
+                      Only {product.stock} Left in Stock
+                    </span>
+                  ) : (
+                    <span className='text-success'>
+                      ({product.stock} Stock Available)
+                    </span>
+                  )
+                ) : (
+                  <span className='text-danger'>Out of Stock</span>
+                )}
+              </div>
+
               <button
                 className='btn btn-outline-dark'
                 onClick={() => addProduct(product)}
+                disabled={product.stock <= 0}
               >
-                Add to Cart
+                {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
               </button>
               <Link to='/cart' className='btn btn-dark mx-3'>
                 Go to Cart
