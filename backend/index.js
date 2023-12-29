@@ -21,6 +21,7 @@ const orderRoutes = require('./routes/orderRoutes')
 const cartRoutes = require('./routes/cartRoutes')
 const logRoutes = require('./routes/logRoutes')
 const termConditionRoutes = require('./routes/termCondition')
+const expiredOrderRoutes = require('./routes/expiredOrderRoutes')
 // Routes Create
 app.use('/auth',  authRoute);
 app.use('/api', userRoute);
@@ -30,6 +31,7 @@ app.use('/api', orderRoutes)
 app.use('/api', cartRoutes);
 app.use('/api', logRoutes)
 app.use('/api', termConditionRoutes);
+app.use('/api', expiredOrderRoutes)
 // Listen Server
 const PORT = process.env.PORT || 3002;
   app.listen(PORT, () => {

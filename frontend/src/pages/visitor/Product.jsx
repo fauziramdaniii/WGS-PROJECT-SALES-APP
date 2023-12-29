@@ -29,7 +29,7 @@ const Product = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/products/${id}`
+          `${import.meta.env.VITE_API_URL}api/products/${id}`
         )
         console.log(response)
 
@@ -56,7 +56,7 @@ const Product = () => {
     const formatter = new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
-      minimumFractionDigits: 2
+      minimumFractionDigits: 0
     })
     return formatter.format(amount)
   }

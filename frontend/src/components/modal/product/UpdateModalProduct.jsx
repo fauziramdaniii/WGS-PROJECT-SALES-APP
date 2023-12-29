@@ -19,7 +19,7 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
         console.error('Error fetching categories:', error)
       }
     }
-
+    console.log(updatedData, 'ini updated data')
     setUpdatedData(productData || {})
     fetchCategories()
   }, [productData])
@@ -34,7 +34,6 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
 
   const handleImageChange = e => {
     const file = e.target.files[0]
-    console.log(file)
     setImageFile(file)
   }
 
@@ -61,7 +60,6 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
                   name='name'
                   value={updatedData.name || ''}
                   onChange={handleChange}
-                  required
                 />
               </Form.Group>
               <Form.Group controlId='price' className='mb-3'>
@@ -72,7 +70,6 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
                   name='price'
                   value={updatedData.price || ''}
                   onChange={handleChange}
-                  required
                 />
               </Form.Group>
               <Form.Group controlId='image' className='mb-3'>
@@ -82,7 +79,7 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
                   name='image'
                   accept='image/*' // Allow only image files
                   encType='multipart/form-data'
-                  onChange={handleImageChange}
+                  onChange={handleImageChange} // Remove value prop
                 />
               </Form.Group>
             </div>
@@ -96,7 +93,6 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
                   name='description'
                   value={updatedData.description || ''}
                   onChange={handleChange}
-                  required
                 />
               </Form.Group>
               <Form.Group controlId='stock' className='mb-3'>
@@ -107,7 +103,6 @@ const UpdateModalProduct = ({ isOpen, onClose, onUpdate, productData }) => {
                   name='stock'
                   value={updatedData.stock || ''}
                   onChange={handleChange}
-                  required
                 />
               </Form.Group>
               <Form.Group className='mb-3' controlId='id_category'>

@@ -74,7 +74,8 @@ const updateProduct = async (req, res) => {
     await updatedProduct.update({
       name,
       price,
-      image: req.file.filename,
+      // image: req.file.filename,
+      image,
       description,
       stock,
       id_category,

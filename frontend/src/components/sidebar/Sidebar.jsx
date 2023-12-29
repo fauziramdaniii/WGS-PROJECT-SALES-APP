@@ -110,10 +110,12 @@ const Sidebar = () => {
               </li>
             </Link>
             <p className='title'>USER</p>
-            <li>
-              <PermContactCalendarRoundedIcon className='icon' />
-              <span>Profile</span>
-            </li>
+            <Link to='/admin/expired-order' style={{ textDecoration: 'none' }}>
+              <li>
+                <PermContactCalendarRoundedIcon className='icon' />
+                <span>Setting</span>
+              </li>
+            </Link>
             <li>
               <LogoutIcon className='icon' />
               <span onClick={logout}>Logout</span>
@@ -121,11 +123,11 @@ const Sidebar = () => {
           </ul>
         )}
       </div>
-      <div className='bottom'>
+      {/* <div className='bottom'>
         <div className='colorOption'></div>
         <div className='colorOption'></div>
         <div className='colorOption'></div>
-      </div>
+      </div> */}
     </div>
   )
 }

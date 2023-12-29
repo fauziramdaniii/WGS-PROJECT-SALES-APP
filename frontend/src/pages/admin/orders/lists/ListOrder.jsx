@@ -18,22 +18,32 @@ import Navbar from '../../../../components/navbar/Navbar'
 import './list.scss'
 
 const ListOrder = () => {
-  const { getOrderProduct } = useOrderStores()
+  const { getOrder } = useOrderStores()
   const [dataOrder, setDataOrder] = useState([])
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getOrderProduct()
+        const response = await getOrder()
+        console.log(response)
         setDataOrder(response.data)
       } catch (error) {
         console.error('error fetching data: ', error)
       }
     }
     fetchData()
-  }, [getOrderProduct])
+  }, [getOrder])
+
+  const formatToRupiah = amount => {
+    const formatter = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    })
+    return formatter.format(amount)
+  }
 
   const handleConfirmStatus = async orderId => {
     Swal.fire({
@@ -45,9 +55,12 @@ const ListOrder = () => {
     }).then(async result => {
       if (result.isConfirmed) {
         try {
-          await axios.put(`http://localhost:3000/api/order/${orderId}/status`, {
-            status: 'sold'
-          })
+          await axios.put(
+            `${import.meta.env.VITE_API_URL}api/order/${orderId}/status`,
+            {
+              status: 'sold'
+            }
+          )
           Swal.fire('Order confirmed!', '', 'success')
         } catch (error) {
           console.error('Error confirming status:', error)
@@ -98,7 +111,9 @@ const ListOrder = () => {
                       <TableCell className='tableCell'>
                         <div className='cellWrapper'>
                           <img
-                            src={`http://localhost:3000/uploads/${row.product.image}`}
+                            src={`${import.meta.env.VITE_API_URL}uploads/${
+                              row.product.image
+                            }`}
                             alt=''
                             className='image'
                           />
@@ -108,7 +123,10 @@ const ListOrder = () => {
                       <TableCell className='tableCell'>
                         {new Date(row.order_date).toLocaleDateString()}
                       </TableCell>
-                      <TableCell className='tableCell'>{`Rp. ${row.total_amount}`}</TableCell>
+                      <TableCell className='tableCell'>
+                        {' '}
+                        {formatToRupiah(row.total_amount)}
+                      </TableCell>
                       <TableCell className='tableCell'>
                         {row.payment_method}
                       </TableCell>
@@ -131,7 +149,7 @@ const ListOrder = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[10, 25, 50]}
               component='div'
               count={dataOrder.length}
               rowsPerPage={rowsPerPage}

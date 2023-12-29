@@ -10,11 +10,11 @@ const fetchTermCondition = async () => {
     const termAndContditionColoumns = [
       // Define your columns based on the structure of the data
       { field: 'No', headerName: 'No', width: 70 },
-      { field: 'title', headerName: 'Title', width: 70 },
+      { field: 'title', headerName: 'Title', width: 270 },
       {
         field: 'content',
         headerName: 'Content',
-        width: 150
+        width: 270
       }
     ]
 

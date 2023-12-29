@@ -40,7 +40,7 @@ const cartController = {
         await logActivity({
         timestamp: new Date(),
         activityType: 'Add Cart',
-        user: id_user,
+        user: 'id_user',
         details: 'Add Cart',
         ipAddress: req.ip,
         device: req.headers['user-agent'],

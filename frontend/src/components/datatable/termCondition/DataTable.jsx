@@ -50,32 +50,32 @@ const DataTable = () => {
     }
   }
 
-  const handleDelete = async id => {
-    try {
-      const confirmDelete = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      })
+  // const handleDelete = async id => {
+  //   try {
+  //     const confirmDelete = await Swal.fire({
+  //       title: 'Are you sure?',
+  //       text: "You won't be able to revert this!",
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonColor: '#3085d6',
+  //       cancelButtonColor: '#d33',
+  //       confirmButtonText: 'Yes, delete it!'
+  //     })
 
-      if (confirmDelete.isConfirmed) {
-        await deleteTerm(id)
-        setData(prevData => prevData.filter(item => item.id !== id))
+  //     if (confirmDelete.isConfirmed) {
+  //       await deleteTerm(id)
+  //       setData(prevData => prevData.filter(item => item.id !== id))
 
-        Swal.fire({
-          title: 'Deleted!',
-          text: 'Your category has been deleted.',
-          icon: 'success'
-        })
-      }
-    } catch (error) {
-      console.error('Error deleting category:', error)
-    }
-  }
+  //       Swal.fire({
+  //         title: 'Deleted!',
+  //         text: 'Your category has been deleted.',
+  //         icon: 'success'
+  //       })
+  //     }
+  //   } catch (error) {
+  //     console.error('Error deleting category:', error)
+  //   }
+  // }
 
   const handleCreateTerm = async userData => {
     try {
@@ -136,17 +136,17 @@ const DataTable = () => {
           >
             <div className='viewButton'>View</div>
           </Link> */}
-          <div
+          {/* <div
             className='deleteButton'
             onClick={() => handleDelete(params.row.id)}
           >
             Delete
-          </div>
+          </div> */}
           <div
             className='deleteButton'
             onClick={() => openUpdateModal(params.row)}
           >
-            Edit
+            Edit Term
           </div>
         </div>
       )
@@ -157,9 +157,9 @@ const DataTable = () => {
     <div className='datatable'>
       <div className='datatableTitle'>
         Term And Condition
-        <button onClick={openModalTerm} className='link'>
+        {/* <button onClick={openModalTerm} className='link'>
           Add New Term Condition
-        </button>
+        </button> */}
       </div>
       {data.length > 0 ? (
         <DataGrid

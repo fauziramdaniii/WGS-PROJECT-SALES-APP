@@ -19,7 +19,6 @@ User.init(
     fullname: DataTypes.STRING,
     username: {
       type: DataTypes.STRING,
-      allowNull: false,
       unique: true,
     },
     google_id: DataTypes.STRING,

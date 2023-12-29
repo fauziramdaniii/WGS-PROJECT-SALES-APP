@@ -11,16 +11,19 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import useOrderStores from '../../stores/order/OrderStore'
+import axios from 'axios'
 
 const Order = () => {
   const { getOrderProduct } = useOrderStores()
   const [dataOrder, setDataOrder] = useState([])
-
   useEffect(() => {
+    const id_user = localStorage.getItem('id_user')
     const fetchData = async () => {
       try {
-        const response = await getOrderProduct()
-        setDataOrder(response.data)
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}api/order/${id_user}`
+        )
+        setDataOrder(response.data.data)
       } catch (error) {
         console.error('error fetching data: ', error)
       }
@@ -54,7 +57,9 @@ const Order = () => {
                   <TableCell className='tableCell'>
                     <div className='cellWrapper'>
                       <img
-                        src={`http://localhost:3000/uploads/${row.product.image}`}
+                        src={`${import.meta.env.VITE_API_URL}uploads/${
+                          row.product.image
+                        }`}
                         alt=''
                         className='image'
                       />

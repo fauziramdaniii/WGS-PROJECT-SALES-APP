@@ -23,27 +23,27 @@ const Navbar = () => {
           <SearchOutlinedIcon />
         </div>
         <div className='items'>
-          <div className='item'>
+          {/* <div className='item'>
             <LanguageOutlinedIcon className='icon' />
             English
-          </div>
-          <div className='item'>
+          </div> */}
+          {/* <div className='item'>
             <DarkModeOutlinedIcon className='icon' />
           </div>
           <div className='item'>
             <FullscreenExitOutlinedIcon className='icon' />
-          </div>
+          </div> */}
           <div className='item'>
             <CircleNotificationsOutlinedIcon className='icon' />
             <div className='counter'>1</div>
           </div>
-          <div className='item'>
+          {/* <div className='item'>
             <ChatOutlinedIcon className='icon' />
             <div className='counter'>1</div>
-          </div>
-          <div className='item'>
+          </div> */}
+          {/* <div className='item'>
             <FormatListBulletedOutlinedIcon className='icon' />
-          </div>
+          </div> */}
           <div className='item'>
             <img
               src='https://marketplace.canva.com/EAFlcJIzmtg/1/0/800w/canva-bright-colorful-young-man-avatar-U6MaG3J9sic.jpg'

@@ -25,9 +25,9 @@ const Cart = () => {
             <Link to='/' className='btn  btn-outline-dark mx-4'>
               <i className='fa fa-arrow-left'></i> Continue Shopping
             </Link>
-            <Link to='/order' className='btn btn-outline-dark mx-4'>
+            {/* <Link to='/order' className='btn btn-outline-dark mx-4'>
               See My Order <i className='fa fa-arrow-right'></i>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -65,13 +65,16 @@ const Cart = () => {
 
       // Send order to API
       const idUser = localStorage.getItem('id_user')
-      const response = await axios.post('http://localhost:3000/api/order', {
-        id_user: idUser,
-        id_product: state[0].cart.id_product,
-        quantity: state[0].qty,
-        payment_method: 'cash',
-        notes: 'Collect at Store'
-      })
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}api/order`,
+        {
+          id_user: idUser,
+          id_product: state[0].cart.id_product,
+          quantity: state[0].qty,
+          payment_method: 'cash',
+          notes: 'Collect at Store'
+        }
+      )
 
       console.log(response)
       if (response.status !== 201) {

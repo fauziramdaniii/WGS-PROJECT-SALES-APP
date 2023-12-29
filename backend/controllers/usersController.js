@@ -220,7 +220,7 @@ const UserController = {
       // Send the new password to the user's email
       sendNewPasswordByEmail(email, newPassword)
 
-      return res.status(200).json({ message: 'Password reset successfully' })
+      return res.status(200).json({ message: 'Password Reset Success, Check Your Email Account' })
     } catch (error) {
       console.error(error)
       return res.status(500).json({ message: 'Internal Server Error' })
@@ -267,7 +267,7 @@ const UserController = {
         <p>Your new password is: <strong>${newPassword}</strong></p>
         <p>Please ensure to change your password after logging in for security reasons.</p>
         <p>Thank you,</p>
-        <p>Your Application Name Team</p>
+        <p>Sales App Fauzi Ramdani</p>
       `
       }
 

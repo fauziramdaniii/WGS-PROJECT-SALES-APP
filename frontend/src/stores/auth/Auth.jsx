@@ -94,7 +94,37 @@ const useAuthStores = () => {
     }
   }
 
-  return { postLogin, handleSubmit, setEmail, setPassword, logout }
+  const postRegister = async userData => {
+    try {
+      const response = await apiService.byPostData('api/register', userData)
+      return response
+    } catch (error) {
+      console.error(error)
+      return { error: 'Internal Server Error' }
+    }
+  }
+
+  const resetPassword = async email => {
+    try {
+      const response = await apiService.byPostData('api/reset-password', {
+        email
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error resetting password:', error)
+      throw error
+    }
+  }
+
+  return {
+    postLogin,
+    handleSubmit,
+    setEmail,
+    setPassword,
+    logout,
+    postRegister,
+    resetPassword
+  }
 }
 
 export default useAuthStores

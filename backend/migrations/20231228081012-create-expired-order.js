@@ -2,17 +2,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('OrderExpirations', {
+    await queryInterface.createTable('ExpiredOrders', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      orderId: {
-        type: Sequelize.INTEGER
-      },
-      expirationTime: {
+      expiredOrder: {
         type: Sequelize.DATE
       },
       createdAt: {
@@ -26,6 +23,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('OrderExpirations');
+    await queryInterface.dropTable('ExpiredOrders');
   }
 };

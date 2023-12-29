@@ -88,63 +88,74 @@ const orderController = {
     }
   },
 
- getOrderHeader: async (req, res) => {
-  try {
-    const ordersHeader = await Order.findAll({
-      attributes: [
-        'id_user',
-        [Sequelize.fn('SUM', Sequelize.col('quantity')), 'total_quantity'],
-        [Sequelize.fn('SUM', Sequelize.col('total_amount')), 'total_amount'],
-        'payment_method',
-      ],
-      include: [
-        {
-          model: Product,
-          as: 'product',
-          attributes: [],
-        },
-      ],
-      group: ['id_user', 'payment_method'],
-    });
+  getOrder: async (req, res) => {
+    try {
+      const order = await Order.findAll({
+        attributes: [
+          'id',
+          'id_user',
+          'id_product',
+          'order_date',
+          'status',
+          'total_amount',
+          'quantity',
+          'payment_method',
+        ],
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['name', 'price', 'image'],
+          },
+        ],
+        order: [['id_user', 'ASC']],
+      });
 
-    res.status(200).json({ success: true, data: ordersHeader });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-},
+      res.status(200).json({ success: true, data: order });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  },
 
-getOrderedProducts: async (req, res) => {
-  try {
-    const orderedProducts = await Order.findAll({
-      attributes: [
-        'id',
-        'id_user',
-        'id_product',
-        'order_date',
-        'status',
-        'total_amount',
-        'quantity',
-        'payment_method',
-      ],
-      include: [
-        {
-          model: Product,
-          as: 'product',
-          attributes: ['name', 'price', 'image'],
-        },
-      ],
-      order: [['id_user', 'ASC']],
-    });
+   getOrderByUserId: async (req, res) => {
+    try {
+      const { id_user } = req.params;
 
-    res.status(200).json({ success: true, data: orderedProducts });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-},
+      // Find orders by user ID
+      const orders = await Order.findAll({
+        where: { id_user },
+        attributes: [
+          'id',
+          'id_user',
+          'id_product',
+          'order_date',
+          'status',
+          'total_amount',
+          'quantity',
+          'payment_method',
+        ],
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['name', 'price', 'image'],
+          },
+        ],
+        order: [['order_date', 'DESC']], // Order by date, adjust as needed
+      });
 
+      if (!orders || orders.length === 0) {
+        return res.status(404).json({ success: false, error: 'Orders not found for the given user' });
+      }
 
+      res.status(200).json({ success: true, data: orders });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  },
+  
   deleteOrder: async (req, res) => {
     try {
       const { id } = req.params;

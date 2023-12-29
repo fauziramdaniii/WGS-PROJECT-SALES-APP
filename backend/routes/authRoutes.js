@@ -2,10 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
-const { login } = require('../controllers/authControllers');
+const { login, register, changePassword } = require('../controllers/authControllers');
 const { authenticateToken, logout } = require('../middleware/authMiddleware');
 
 router.post('/login', login);
+
+router.post('/register', register)
+
+router.post('/change-password/:id', changePassword)
 
 router.post('/logout', authenticateToken, logout);
 

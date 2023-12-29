@@ -47,6 +47,61 @@ const login = async (req, res) => {
   }
 };
 
+const register = async (req, res) => {
+  const { fullname, email, password, roles } = req.body;
 
+  try {
+    // Check if user with the same email already exists
+    const existingUser = await User.findOne({
+      attributes: ['id'],
+      where: { email },
+    });
 
-module.exports = { login };
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists' });
+    }
+    // Hash the password before saving it to the database
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const newUser = await User.create({
+      fullname,
+      email,
+      password: hashedPassword,
+      roles: roles || 'user', // Default role is 'user'
+    });
+
+    res.status(201).json({ result: newUser, message: 'Registration successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const userId = req.params.id; // Assuming you have middleware to extract user information from the token
+
+  try {
+    const user = await User.findByPk(userId);
+    console.log(user)
+
+    if (!user || !user.password || !(await bcrypt.compare(oldPassword, user.password))) {
+      return res.status(401).json({ message: 'Invalid old password' });
+    }
+
+    // Hash the new password before saving it to the database
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    await User.update({ password: hashedNewPassword }, { where: { id: userId } });
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+module.exports = { login, register, changePassword };
+

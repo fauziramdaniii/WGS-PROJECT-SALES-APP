@@ -32,7 +32,10 @@ const Products = () => {
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true)
-      const response = await fetch('http://localhost:3000/api/products')
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}api/products`
+      )
       if (componentMounted) {
         const responseData = await response.json()
         setData(responseData)
@@ -53,7 +56,7 @@ const Products = () => {
     const formatter = new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
-      minimumFractionDigits: 2
+      minimumFractionDigits: 0
     })
     return formatter.format(amount)
   }
