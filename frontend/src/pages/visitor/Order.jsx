@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Footer from '../../components/visitor/Footer'
-import Navbar from '../../components/visitor/Navbar'
 import { Link } from 'react-router-dom'
 import './table.scss'
 import Table from '@mui/material/Table'
@@ -31,11 +29,19 @@ const Order = () => {
     fetchData()
   }, [getOrderProduct])
 
+  const formatToRupiah = amount => {
+    const formatter = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    })
+    return formatter.format(amount)
+  }
+
   return (
     <>
-      <Navbar />
-      <div className='container my-3 py-3'>
-        <h1 className='text-center'>Order</h1>
+      <div className='container my-1 py-1'>
+        <h4 className='text-center'>Order</h4>
         <hr />
 
         <TableContainer component={Paper} className='table'>
@@ -69,7 +75,9 @@ const Order = () => {
                   <TableCell className='tableCell'>
                     {new Date(row.order_date).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className='tableCell'>{`Rp. ${row.total_amount}`}</TableCell>
+                  <TableCell className='tableCell'>
+                    {formatToRupiah(row.total_amount)}
+                  </TableCell>
                   <TableCell className='tableCell'>
                     {row.payment_method}
                   </TableCell>
@@ -84,7 +92,6 @@ const Order = () => {
           </Table>
         </TableContainer>
       </div>
-      <Footer />
     </>
   )
 }

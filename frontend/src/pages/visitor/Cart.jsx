@@ -43,6 +43,15 @@ const Cart = () => {
     dispatch(delCart(product))
   }
 
+  const formatToRupiah = amount => {
+    const formatter = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    })
+    return formatter.format(amount)
+  }
+
   const collectAtStore = async () => {
     try {
       // Confirm order with SweetAlert
@@ -87,7 +96,11 @@ const Cart = () => {
       })
 
       // Show success notification
-      Swal.fire('Order Placed!', '', 'success')
+      Swal.fire(
+        'Order Placed, Check Ur Email For Invoice Booking!',
+        '',
+        'success'
+      )
     } catch (error) {
       console.error('Error placing order:', error)
       // Handle error or dispatch an action to handle the error
@@ -164,8 +177,8 @@ const Cart = () => {
                             </div>
                             <p className='text-start text-md-center'>
                               <strong>
-                                <span className='text-muted'>{item.qty}</span> x
-                                Rp. {item.product.price}
+                                <span className='text-muted'>{item.qty}</span> x{' '}
+                                {formatToRupiah(item.product.price)}
                               </strong>
                             </p>
                           </div>
@@ -185,14 +198,16 @@ const Cart = () => {
                     <ul className='list-group list-group-flush'>
                       <li className='list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0'>
                         Products ({totalItems})
-                        <span>Rp. {Math.round(subtotal)}</span>
+                        <span>{formatToRupiah(Math.round(subtotal))}</span>
                       </li>
                       <li className='list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3'>
                         <div>
                           <strong>Total amount</strong>
                         </div>
                         <span>
-                          <strong>Rp. {Math.round(subtotal)}</strong>
+                          <strong>
+                            {formatToRupiah(Math.round(subtotal))}
+                          </strong>
                         </span>
                       </li>
                     </ul>

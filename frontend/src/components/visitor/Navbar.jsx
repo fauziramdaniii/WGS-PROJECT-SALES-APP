@@ -66,9 +66,8 @@ const Navbar = () => {
                 >
                   <i className='fa fa-sign-out-alt mr-1'></i> Logout
                 </NavLink>
-                {/* Conditionally render "My Order" NavLink */}
-                <NavLink to='/order' className='btn btn-outline-dark m-2'>
-                  <i className='fa fa-user-plus mr-1'></i> My Order
+                <NavLink to='/dashboard' className='btn btn-outline-dark m-2'>
+                  <i className='fa fa-user-plus mr-1'></i> Dashboard
                 </NavLink>
               </>
             ) : (

@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom'
 const Products = () => {
   const [data, setData] = useState([])
   const [filter, setFilter] = useState(data)
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState({})
   let componentMounted = true
@@ -30,25 +31,28 @@ const Products = () => {
   }
 
   useEffect(() => {
-    const getProducts = async () => {
+    const fetchData = async () => {
       setLoading(true)
 
-      const response = await fetch(
+      // Fetch products
+      const productsResponse = await fetch(
         `${import.meta.env.VITE_API_URL}api/products`
       )
-      if (componentMounted) {
-        const responseData = await response.json()
-        setData(responseData)
-        setFilter(responseData)
-        setLoading(false)
-      }
+      const productsData = await productsResponse.json()
+      setData(productsData)
+      setFilter(productsData)
 
-      return () => {
-        componentMounted = false
-      }
+      // Fetch categories
+      const categoriesResponse = await fetch(
+        `${import.meta.env.VITE_API_URL}api/category`
+      )
+      const categoriesData = await categoriesResponse.json()
+      setCategories(categoriesData)
+
+      setLoading(false)
     }
 
-    getProducts()
+    fetchData()
   }, [])
 
   // Fungsi untuk memformat angka sebagai mata uang Rupiah
@@ -100,25 +104,17 @@ const Products = () => {
           >
             All
           </button>
-          <button
-            className='btn btn-outline-dark btn-sm m-2'
-            onClick={() => filterProduct(10)} // Replace 7 with the actual category ID
-          >
-            Shoes
-          </button>
-          <button
-            className='btn btn-outline-dark btn-sm m-2'
-            onClick={() => filterProduct(11)} // Replace 7 with the actual category ID
-          >
-            T-Shirt
-          </button>
-          <button
-            className='btn btn-outline-dark btn-sm m-2'
-            onClick={() => filterProduct(12)} // Replace 7 with the actual category ID
-          >
-            Hoddie
-          </button>
+          {categories.map(category => (
+            <button
+              key={category.id}
+              className='btn btn-outline-dark btn-sm m-2'
+              onClick={() => filterProduct(category.id)}
+            >
+              {category.name}
+            </button>
+          ))}
         </div>
+
         {filter.map(product => (
           <div
             id={product.id}

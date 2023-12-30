@@ -15,13 +15,14 @@ import Register from '../pages/register/Register'
 import Checkout from '../pages/visitor/Checkout'
 import PageNotFound from '../pages/visitor/PageNotFound'
 import Order from '../pages/visitor/Order'
+import Dashboard from '../pages/visitor/Dashboard'
+import ChangePassword from '../pages/visitor/ChangePassword'
 
 const Visitor = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/product' element={<Products />} />
-      <Route path='/order' element={<Order />} />
       <Route path='/product/:id' element={<Product />} />
       <Route path='/about' element={<AboutPage />} />
       <Route path='/contact' element={<ContactPage />} />
@@ -29,6 +30,10 @@ const Visitor = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/checkout' element={<Checkout />} />
+      <Route path='/dashboard' element={<Dashboard />}>
+        <Route path='/dashboard/order' element={<Order />} />
+        <Route path='/dashboard/change-password' element={<ChangePassword />} />
+      </Route>
       <Route path='*' element={<PageNotFound />} />
       <Route path='/product/*' element={<PageNotFound />} />
     </Routes>

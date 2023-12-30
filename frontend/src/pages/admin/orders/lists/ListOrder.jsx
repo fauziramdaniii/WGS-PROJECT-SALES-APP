@@ -24,17 +24,18 @@ const ListOrder = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getOrder()
-        console.log(response)
-        setDataOrder(response.data)
-      } catch (error) {
-        console.error('error fetching data: ', error)
-      }
-    }
     fetchData()
-  }, [getOrder])
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      const response = await getOrder()
+      console.log(response)
+      setDataOrder(response.data)
+    } catch (error) {
+      console.error('error fetching data: ', error)
+    }
+  }
 
   const formatToRupiah = amount => {
     const formatter = new Intl.NumberFormat('id-ID', {
@@ -62,6 +63,7 @@ const ListOrder = () => {
             }
           )
           Swal.fire('Order confirmed!', '', 'success')
+          fetchData()
         } catch (error) {
           console.error('Error confirming status:', error)
           Swal.fire('Error confirming order', '', 'error')
@@ -131,17 +133,24 @@ const ListOrder = () => {
                         {row.payment_method}
                       </TableCell>
                       <TableCell className='tableCell'>
-                        <button
-                          className={`btn ${
-                            row.status[0] === 'sold'
-                              ? 'btn-outline-secondary btn-sm'
-                              : 'btn-outline-success btn-sm'
-                          }`}
-                          onClick={() => handleConfirmStatus(row.id)}
-                          disabled={row.status[0] === 'sold'}
-                        >
-                          {row.status[0] === 'sold' ? 'Sold' : 'Confirm'}
-                        </button>
+                        {row.status[0] === 'canceled' ? (
+                          <span style={{ color: 'red' }}>Canceled</span>
+                        ) : (
+                          <button
+                            className={`btn ${
+                              row.status[0] === 'sold'
+                                ? 'btn-outline-secondary btn-sm'
+                                : 'btn-outline-success btn-sm'
+                            }`}
+                            onClick={() => handleConfirmStatus(row.id)}
+                            disabled={
+                              row.status[0] === 'sold' ||
+                              row.status[0] === 'canceled'
+                            }
+                          >
+                            {row.status[0] === 'sold' ? 'Sold' : 'Confirm'}
+                          </button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
