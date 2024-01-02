@@ -1,5 +1,6 @@
 # WGS-PROJECT-SALES-APP
 Project For Hiring Recruitment PT. WGS Bootcamp Batch 7
+
 Fitur
 	- Role -> Superadmin, Admin, User
 	- Login, Regist, Reset Password, Forgot Password, Change Password To Email
@@ -7,12 +8,12 @@ Fitur
 	- App Log
 	- Picture For Stuff
 	- Customer List 
-  - Category List
+	- Category List
 	- Product List
 	- Selling List
 	- Order List
 	- Cart List
-  - App Config
+  	- App Config
 
 Revisi Simulasi Presentasi
 1. log gaada crud, get dan create aja (DONE)
