@@ -25,8 +25,8 @@
     gap: 15px;
 
     .featuredChart {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
     }
 
     .title {
@@ -36,6 +36,7 @@
 
     .amount {
       font-size: 30px;
+      margin-bottom: 10px;
     }
 
     .desc {
@@ -47,9 +48,9 @@
 
     .summary {
       width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      // display: flex;
+      // align-items: center;
+      // justify-content: space-between;
 
       .item {
         text-align: center;
@@ -61,7 +62,8 @@
 
         .itemResult {
           display: flex;
-          align-items: center;
+          flex-direction: column; /* Updated to column layout */
+          align-items: center; /* Center the content */
           margin-top: 10px;
           font-size: 14px;
 

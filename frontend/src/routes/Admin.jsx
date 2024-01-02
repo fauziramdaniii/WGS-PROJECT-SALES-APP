@@ -23,10 +23,16 @@ import ListLog from '../pages/admin/log/lists/listLog'
 // Menu Term n Condition
 import ListTerm from '../pages/admin/termCondition/lists/ListTerm'
 
+// Menu Setting/Config
+import ListConfig from '../pages/admin/config/ListConfig'
+
 const Admin = () => {
   return (
     <Routes>
       <Route index element={<Home />} />
+      <Route path='dashboard'>
+        <Route index element={<Home />} />
+      </Route>
       <Route path='users'>
         <Route index element={<List />} />
         <Route path=':userId' element={<Single />} />
@@ -50,6 +56,9 @@ const Admin = () => {
       <Route path='term-condition'>
         <Route index element={<ListTerm />} />
         <Route path=':orderId' element={<Single />} />
+      </Route>
+      <Route path='setting'>
+        <Route index element={<ListConfig />} />
       </Route>
     </Routes>
   )

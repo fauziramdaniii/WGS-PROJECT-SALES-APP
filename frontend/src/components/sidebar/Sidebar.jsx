@@ -41,10 +41,12 @@ const Sidebar = () => {
         {role === 'superadmin' && (
           <ul>
             <p className='title'>MAIN</p>
-            <li>
-              <GridViewRoundedIcon className='icon' />
-              <span>Dashboard</span>
-            </li>
+            <Link to='/superadmin/dashboard' style={{ textDecoration: 'none' }}>
+              <li>
+                <GridViewRoundedIcon className='icon' />
+                <span>Dashboard</span>
+              </li>
+            </Link>
             <p className='title'>LIST</p>
             <Link to='/superadmin/users' style={{ textDecoration: 'none' }}>
               <li>
@@ -53,10 +55,12 @@ const Sidebar = () => {
               </li>
             </Link>
             <p className='title'>SERVICE</p>
-            <li>
-              <HubIcon className='icon' />
-              <span>Logs</span>
-            </li>
+            <Link to='/superadmin/log' style={{ textDecoration: 'none' }}>
+              <li>
+                <HubIcon className='icon' />
+                <span>Logs</span>
+              </li>
+            </Link>
             <p className='title'>USER</p>
             <li>
               <LogoutIcon className='icon' />
@@ -67,10 +71,12 @@ const Sidebar = () => {
         {role === 'admin' && (
           <ul>
             <p className='title'>MAIN</p>
-            <li>
-              <GridViewRoundedIcon className='icon' />
-              <span>Dashboard</span>
-            </li>
+            <Link to='/admin/dashboard' style={{ textDecoration: 'none' }}>
+              <li>
+                <GridViewRoundedIcon className='icon' />
+                <span>Dashboard</span>
+              </li>
+            </Link>
             <p className='title'>LIST</p>
             <Link to='/admin/users' style={{ textDecoration: 'none' }}>
               <li>
@@ -110,7 +116,7 @@ const Sidebar = () => {
               </li>
             </Link>
             <p className='title'>USER</p>
-            <Link to='/admin/expired-order' style={{ textDecoration: 'none' }}>
+            <Link to='/admin/setting' style={{ textDecoration: 'none' }}>
               <li>
                 <PermContactCalendarRoundedIcon className='icon' />
                 <span>Setting</span>

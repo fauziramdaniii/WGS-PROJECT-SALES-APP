@@ -97,7 +97,7 @@ const Cart = () => {
 
       // Show success notification
       Swal.fire(
-        'Order Placed, Check Ur Email For Invoice Booking!',
+        'Order Placed, Check Your Email For Invoice Booking!',
         '',
         'success'
       )

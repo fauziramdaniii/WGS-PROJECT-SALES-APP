@@ -1,7 +1,8 @@
+import React, { useEffect, useState } from 'react'
 import './chart.scss'
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -9,48 +10,57 @@ import {
   ResponsiveContainer
 } from 'recharts'
 
-const data = [
-  { name: 'January', Total: 1200 },
-  { name: 'February', Total: 2000 },
-  { name: 'March', Total: 3000 },
-  { name: 'App', Total: 5000 },
-  { name: 'Mei', Total: 9000 },
-  { name: 'Juni', Total: 12000 }
-]
+import getDashboard from '../../stores/DashboardStores'
+
+// Utility function to format number to Rupiah
+const formatToRupiah = value => {
+  const formatter = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0
+  })
+  return formatter.format(value)
+}
 
 const Chart = () => {
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getDashboard()
+        setData(response.countTotalOrderLast3Month)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <div className='chart'>
-      <div className='title'>Last 6 Month</div>
+      <div className='title'>Last 3 Months</div>
       <ResponsiveContainer width='99%' aspect={2 / 1}>
-        <AreaChart
+        <BarChart
           width={730}
           height={250}
           data={data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
-          <defs>
-            <linearGradient id='total' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='5%' stopColor='#8884d8' stopOpacity={0.8} />
-              <stop offset='95%' stopColor='#8884d8' stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <XAxis dataKey='name' color='gray' />
-          <YAxis />
           <CartesianGrid
             strokeDasharray='3 3'
             className='chartGrid'
             stroke='gray'
           />
-          <Tooltip />
-          <Area
-            type='monotone'
-            dataKey='Total'
-            stroke='#8884d8'
-            fillOpacity={1}
-            fill='url(#total)'
-          />
-        </AreaChart>
+          <XAxis dataKey='month' />
+          {/* <YAxis
+            tickFormatter={value => formatToRupiah(value)}
+            domain={['auto', 'auto']} // To adjust YAxis ticks based on the data
+          /> */}
+          <Tooltip formatter={value => formatToRupiah(value)} />
+          <Bar dataKey='total_amount' fill='#8884d8' />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   )

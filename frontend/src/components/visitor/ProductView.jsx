@@ -81,7 +81,9 @@ const Products = () => {
   }
 
   const filterProduct = categoryId => {
-    const updatedList = data.filter(item => item.id_category === categoryId)
+    const updatedList = data.filter(
+      item => item.id_category === categoryId && item.stock > 0
+    )
     setFilter(updatedList)
   }
 
@@ -115,63 +117,68 @@ const Products = () => {
           ))}
         </div>
 
-        {filter.map(product => (
-          <div
-            id={product.id}
-            key={product.id}
-            className='col-md-4 col-sm-6 col-xs-8 col-12 mb-4'
-          >
-            <div className='card text-center h-100' key={product.id}>
-              <img
-                className='card-img-top p-3'
-                src={`${import.meta.env.VITE_API_URL}uploads/${product.image}`}
-                alt='Card'
-                style={{ height: '400px', objectFit: 'cover' }}
-              />
-              <div className='card-body'>
-                <h5 className='card-title'>{product.name}</h5>
-                <p className='card-text'>
-                  {
-                    product.description.length > 50
-                      ? // Show "More" button only for descriptions with more than 50 characters
-                        showFullDescription[product.id]
-                        ? product.description // Show full description
-                        : `${product.description.slice(0, 70)}...` // Truncate description
-                      : product.description // Show short description as is
-                  }
-                  {product.description.length > 50 && (
-                    <button
-                      className='btn btn-link btn-sm'
-                      onClick={() => toggleDescription(product.id)}
+        {filter.map(
+          product =>
+            product.stock > 0 && (
+              <div
+                id={product.id}
+                key={product.id}
+                className='col-md-4 col-sm-6 col-xs-8 col-12 mb-4'
+              >
+                <div className='card text-center h-100' key={product.id}>
+                  <img
+                    className='card-img-top p-3'
+                    src={`${import.meta.env.VITE_API_URL}uploads/${
+                      product.image
+                    }`}
+                    alt='Card'
+                    style={{ height: '400px', objectFit: 'cover' }}
+                  />
+                  <div className='card-body'>
+                    <h5 className='card-title'>{product.name}</h5>
+                    <p className='card-text'>
+                      {
+                        product.description.length > 50
+                          ? // Show "More" button only for descriptions with more than 50 characters
+                            showFullDescription[product.id]
+                            ? product.description // Show full description
+                            : `${product.description.slice(0, 70)}...` // Truncate description
+                          : product.description // Show short description as is
+                      }
+                      {product.description.length > 50 && (
+                        <button
+                          className='btn btn-link btn-sm'
+                          onClick={() => toggleDescription(product.id)}
+                        >
+                          {showFullDescription[product.id] ? 'Hide' : 'More'}
+                        </button>
+                      )}
+                    </p>
+                  </div>
+                  <ul className='list-group list-group-flush'>
+                    <li className='list-group-item lead'>
+                      {' '}
+                      {formatToRupiah(product.price)}
+                    </li>
+                  </ul>
+                  <div className='card-body'>
+                    <Link
+                      to={'/product/' + product.id}
+                      className='btn btn-dark m-1'
                     >
-                      {showFullDescription[product.id] ? 'Hide' : 'More'}
+                      Buy Now
+                    </Link>
+                    <button
+                      className='btn btn-dark m-1'
+                      onClick={() => addProduct(product)}
+                    >
+                      Add to Cart
                     </button>
-                  )}
-                </p>
+                  </div>
+                </div>
               </div>
-              <ul className='list-group list-group-flush'>
-                <li className='list-group-item lead'>
-                  {' '}
-                  {formatToRupiah(product.price)}
-                </li>
-              </ul>
-              <div className='card-body'>
-                <Link
-                  to={'/product/' + product.id}
-                  className='btn btn-dark m-1'
-                >
-                  Buy Now
-                </Link>
-                <button
-                  className='btn btn-dark m-1'
-                  onClick={() => addProduct(product)}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+            )
+        )}
       </>
     )
   }

@@ -8,12 +8,16 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
+import TablePagination from '@mui/material/TablePagination'
 import useOrderStores from '../../stores/order/OrderStore'
 import axios from 'axios'
 
 const Order = () => {
   const { getOrderProduct } = useOrderStores()
   const [dataOrder, setDataOrder] = useState([])
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(5) // Adjust the number of rows per page
+
   useEffect(() => {
     const id_user = localStorage.getItem('id_user')
     const fetchData = async () => {
@@ -28,6 +32,15 @@ const Order = () => {
     }
     fetchData()
   }, [getOrderProduct])
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage)
+  }
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value)
+    setPage(0)
+  }
 
   const formatToRupiah = amount => {
     const formatter = new Intl.NumberFormat('id-ID', {
@@ -57,7 +70,13 @@ const Order = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {dataOrder.map(row => (
+              {(rowsPerPage > 0
+                ? dataOrder.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : dataOrder
+              ).map(row => (
                 <TableRow key={row.id}>
                   <TableCell className='tableCell'>{row.id}</TableCell>
                   <TableCell className='tableCell'>
@@ -91,6 +110,16 @@ const Order = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component='div'
+          count={dataOrder.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </div>
     </>
   )

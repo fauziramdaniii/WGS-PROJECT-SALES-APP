@@ -1,18 +1,22 @@
 import apiService from '../../utils/apiService'
 
 const useSettingStores = () => {
-  const getExpiredOrder = async () => {
-    const response = await apiService.byGetData('api/expired-order')
+  const getCanceledStatus = async () => {
+    const response = await apiService.byGetData('api/config')
     return response
   }
-  const updateExpiredOrder = async id => {
-    const response = await apiService.byPutData(`api/expired-order/${id}`)
+
+  const updateCanceledStatus = async cancellationTimeoutDays => {
+    const response = await apiService.byPutData(`api/config`, {
+      cancellation_timeout_days: parseInt(cancellationTimeoutDays, 10)
+    })
+    console.log(response, 'api')
     return response
   }
 
   return {
-    getExpiredOrder,
-    updateExpiredOrder
+    getCanceledStatus,
+    updateCanceledStatus
   }
 }
 

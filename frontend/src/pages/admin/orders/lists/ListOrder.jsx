@@ -123,7 +123,7 @@ const ListOrder = () => {
                         </div>
                       </TableCell>
                       <TableCell className='tableCell'>
-                        {new Date(row.order_date).toLocaleDateString()}
+                        {row.order_date}
                       </TableCell>
                       <TableCell className='tableCell'>
                         {' '}

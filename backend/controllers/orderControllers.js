@@ -5,6 +5,7 @@ const { Sequelize } = require('sequelize')
 const { User } = require('../models/user')
 const { logActivity } = require('../utils/logactivity')
 const nodemailer = require('nodemailer')
+const { AppConfig } = require('../models/appconfig')
 
 const orderController = {
 // Import nodemailer di bagian atas file
@@ -36,9 +37,10 @@ createOrder: async (req, res) => {
 
     await order.update({ status: ['booked'] });
 
-    const timeoutDuration = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
-
-     setTimeout(async () => {
+    const config = await AppConfig.findOne();
+    const timeoutDuration = config ? config.cancellation_timeout : 172800000; // Default 2 days in milliseconds
+    console.log(timeoutDuration)
+    setTimeout(async () => {
       const canceledOrder = await Order.findByPk(order.id);
 
       if (canceledOrder && canceledOrder.status.includes('booked')) {
@@ -51,10 +53,9 @@ createOrder: async (req, res) => {
           await product.update({ stock: updatedStock });
         }
 
-        console.log('Order canceled after one minute:', canceledOrder.id);
+        console.log('Order canceled after timeout:', canceledOrder.id);
       }
-    }, timeoutDuration); // 60000 milliseconds = 1 minute
-
+    }, timeoutDuration);
     // Kirim informasi pesanan ke email
     const user = await User.findByPk(id_user);
     console.log(user)
@@ -164,35 +165,43 @@ createOrder: async (req, res) => {
     }
   },
 
-  getOrder: async (req, res) => {
-    try {
-      const order = await Order.findAll({
-        attributes: [
-          'id',
-          'id_user',
-          'id_product',
-          'order_date',
-          'status',
-          'total_amount',
-          'quantity',
-          'payment_method',
-        ],
-        include: [
-          {
-            model: Product,
-            as: 'product',
-            attributes: ['name', 'price', 'image'],
-          },
-        ],
-        order: [['order_date', 'DESC']],
-      });
+ getOrder: async (req, res) => {
+  try {
+    const order = await Order.findAll({
+      attributes: [
+        'id',
+        'id_user',
+        'id_product',
+        'order_date',
+        'status',
+        'total_amount',
+        'quantity',
+        'payment_method',
+      ],
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'price', 'image'],
+        },
+      ],
+      order: [['order_date', 'DESC']],
+    });
 
-      res.status(200).json({ success: true, data: order });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, error: 'Internal Server Error' });
-    }
-  },
+    // Format the date in dd-mm-yyyy
+    const formattedOrder = order.map((item) => {
+      return {
+        ...item.toJSON(),
+        order_date: new Date(item.order_date).toLocaleDateString('en-GB'),
+      };
+    });
+
+    res.status(200).json({ success: true, data: formattedOrder });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+},
 
    getOrderByUserId: async (req, res) => {
     try {

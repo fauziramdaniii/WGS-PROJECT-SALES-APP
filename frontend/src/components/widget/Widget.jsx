@@ -1,21 +1,47 @@
+import React, { useState, useEffect } from 'react'
 import './widget.scss'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
+import getDashboard from '../../stores/DashboardStores'
+import { Link } from 'react-router-dom'
 
 const Widget = props => {
+  const [dataCount, setDataCount] = useState([])
+
+  useEffect(() => {
+    // Fetch dashboard data when component mounts
+    const fetchData = async () => {
+      try {
+        const response = await getDashboard()
+        setDataCount(response)
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+      }
+    }
+
+    fetchData()
+  }, []) // Empty dependency array ensures the effect runs only once on mount
+
+  // Initialize data object
   let data = {}
 
-  const amount = 200
   const diff = 20
 
+  // Switch case to determine the type of widget and set corresponding data
   switch (props.type) {
     case 'user':
       data = {
         title: 'USERS',
-        isMoney: true,
-        link: 'See All Users',
+        link: (
+          <Link
+            to='/admin/users'
+            style={{ textDecoration: 'none', color: 'black' }}
+          >
+            See All Users
+          </Link>
+        ),
         icon: (
           <PersonOutlineIcon
             className='icon'
@@ -30,8 +56,14 @@ const Widget = props => {
     case 'order':
       data = {
         title: 'ORDERS',
-        isMoney: true,
-        link: 'Show All Orders',
+        link: (
+          <Link
+            to='/admin/order'
+            style={{ textDecoration: 'none', color: 'black' }}
+          >
+            See All Order
+          </Link>
+        ),
         icon: (
           <ShoppingCartIcon
             className='icon'
@@ -43,33 +75,45 @@ const Widget = props => {
         )
       }
       break
-    case 'earning':
+    case 'category':
       data = {
-        title: 'EARNING',
-        isMoney: true,
-        link: 'View All Earnings',
+        title: 'CATEGORIES',
+        link: (
+          <Link
+            to='/admin/category'
+            style={{ textDecoration: 'none', color: 'black' }}
+          >
+            See All Category
+          </Link>
+        ),
         icon: (
           <MonetizationOnIcon
             className='icon'
             style={{
-              color: 'green',
-              backgroundColor: 'rgba(255, 0, 0, 0.2)'
+              color: 'blue',
+              backgroundColor: 'rgba(0, 0, 255, 0.2)'
             }}
           />
         )
       }
       break
-    case 'balance':
+    case 'product':
       data = {
-        title: 'BALANCE',
-        isMoney: true,
-        link: 'See All Balance',
+        title: 'PRODUCTS',
+        link: (
+          <Link
+            to='/admin/product'
+            style={{ textDecoration: 'none', color: 'black' }}
+          >
+            See All Product
+          </Link>
+        ),
         icon: (
-          <PersonOutlineIcon
+          <ShoppingCartIcon
             className='icon'
             style={{
-              color: 'purple',
-              backgroundColor: 'rgba(255, 0, 0, 0.2)'
+              color: 'orange',
+              backgroundColor: 'rgba(255, 165, 0, 0.2)'
             }}
           />
         )
@@ -84,7 +128,7 @@ const Widget = props => {
       <div className='left'>
         <div className='title'>{data.title}</div>
         <div className='counter'>
-          {data.isMoney && '$'} {amount}
+          <span>{dataCount[`${props.type.toLowerCase()}Count`]}</span>
         </div>
         <div className='link'>{data.link}</div>
       </div>
