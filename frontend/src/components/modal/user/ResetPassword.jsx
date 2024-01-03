@@ -22,7 +22,9 @@ const ResetPasswordModal = ({
   const handleResetPassword = async () => {
     try {
       const result = await resetPassword(email)
-      if (result.message === 'Password reset successfully') {
+      if (
+        result.message === 'Password Reset Success, Check Your Email Account'
+      ) {
         Swal.fire({
           title: 'Password Reset',
           text: 'Password has been reset successfully.',

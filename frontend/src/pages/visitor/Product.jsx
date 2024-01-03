@@ -2,26 +2,17 @@ import React, { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Link, useParams } from 'react-router-dom'
 // import Marquee from 'react-fast-marquee'
-import { useDispatch } from 'react-redux'
-import { addCart } from '../../redux/action/action'
-import useProductStore from '../../stores/product/ProductStore'
 import Footer from '../../components/visitor/Footer'
 import Navbar from '../../components/visitor/Navbar'
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import addToCartAsync from '../../stores/cart/CartStores'
 
 const Product = () => {
   const { id } = useParams()
   const [product, setProduct] = useState([])
   const [loading, setLoading] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState({})
-
-  const { getProductId } = useProductStore()
-
-  const dispatch = useDispatch()
-
-  const addProduct = product => {
-    dispatch(addCart(product))
-  }
 
   useEffect(() => {
     const getProduct = async () => {
@@ -142,11 +133,12 @@ const Product = () => {
 
               <button
                 className='btn btn-outline-dark'
-                onClick={() => addProduct(product)}
+                onClick={() => handleAddToCart(product.id, 1)}
                 disabled={product.stock <= 0}
               >
                 {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
               </button>
+
               <Link to='/cart' className='btn btn-dark mx-3'>
                 Go to Cart
               </Link>
@@ -155,6 +147,26 @@ const Product = () => {
         </div>
       </>
     )
+  }
+
+  const dispatch = useDispatch()
+
+  const handleAddToCart = async (productId, quantity) => {
+    try {
+      const id_user = localStorage.getItem('id_user')
+      if (!id_user) {
+        // Handle case where user is not authenticated or id_user is not available
+        console.error('User is not authenticated or id_user is not available.')
+        return
+      }
+
+      await dispatch(addToCartAsync(productId, quantity, id_user))
+      console.log('Product added to cart successfully')
+      // Tambahkan logika atau notifikasi sesuai kebutuhan
+    } catch (error) {
+      console.error('Error adding to cart:', error.message)
+      // Handle error, misalnya menampilkan notifikasi error kepada pengguna
+    }
   }
 
   return (

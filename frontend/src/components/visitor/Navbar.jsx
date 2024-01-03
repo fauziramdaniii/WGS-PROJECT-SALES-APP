@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import useAuthStores from '../../stores/auth/Auth'
+import { useSelector } from 'react-redux'
 
 const Navbar = () => {
-  const state = useSelector(state => state.handleCart)
   const token = localStorage.getItem('token')
   const id_user = localStorage.getItem('id_user')
+  const cartItems = useSelector(state => state.cart.cartItems)
 
   const { logout } = useAuthStores()
 
@@ -75,9 +75,9 @@ const Navbar = () => {
                 <i className='fa fa-sign-in-alt mr-1'></i> Login
               </NavLink>
             )}
-
             <NavLink to='/cart' className='btn btn-outline-dark m-2'>
-              <i className='fa fa-cart-shopping mr-1'></i> Cart ({state.length})
+              <i className='fa fa-cart-shopping mr-1'></i> Cart (
+              {cartItems.length})
             </NavLink>
           </div>
         </div>

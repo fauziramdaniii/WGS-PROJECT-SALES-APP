@@ -8,45 +8,63 @@ const nodemailer = require('nodemailer')
 const { AppConfig } = require('../models/appconfig')
 
 const orderController = {
-// Import nodemailer di bagian atas file
 
 createOrder: async (req, res) => {
   try {
-    const { id_user, id_product, quantity, payment_method, notes } = req.body;
+    const id_user = req.body.id_user;
 
-    // Dapatkan data produk
-    const product = await Product.findByPk(id_product);
-    if (!product) {
-      return res.status(404).json({ success: false, error: 'Product not found' });
-    }
-
-    if (product.stock <= 0) {
-      return res.status(404).json({ success: false, error: 'Stock Null' });
-    }
-
-    // Buat pesanan
-    const order = await Order.create({
-      id_user,
-      id_product,
-      quantity,
-      total_amount: quantity * product.price,
-      payment_method,
-      notes,
-      status: ['available'],
+    // Get all cart items for the user
+    const cartItems = await Cart.findAll({
+      where: {
+        id_user,
+      },
+      include: [
+        {
+          model: Product,
+          as: 'product',
+        },
+      ],
     });
 
-    await order.update({ status: ['booked'] });
+    // Create an order for each cart item
+    const orderPromises = cartItems.map(async (cartItem) => {
+      const { id_product, quantity } = cartItem;
+      const product = cartItem.product;
 
+      // Check if there is enough stock for the order
+      if (quantity > product.stock) {
+        return res.status(400).json({ error: `Not enough stock for product: ${product.productName}` });
+      }
+
+      // Create order with status "booked"
+      const order = await Order.create({
+        id_user,
+        id_product,
+        quantity,
+        total_amount: product.price * quantity,
+        payment_method: req.body.payment_method,
+        notes: req.body.notes,
+        status: ['booked'],
+      });
+
+      // Update stock and set status to "booked" in the product table
+      const updatedStock = product.stock - quantity;
+      await product.update({ stock: updatedStock, status: ['booked'] });
+
+      // Remove the item from the cart after creating the order
+      await cartItem.destroy();
+
+      // Set timeout for order cancellation
     const config = await AppConfig.findOne();
     const timeoutDuration = config ? config.cancellation_timeout : 172800000; // Default 2 days in milliseconds
-    console.log(timeoutDuration)
+    console.log(timeoutDuration);
     setTimeout(async () => {
       const canceledOrder = await Order.findByPk(order.id);
 
       if (canceledOrder && canceledOrder.status.includes('booked')) {
         await canceledOrder.update({ status: ['canceled'] });
 
-        // Kembalikan stok produk jika pesanan dibatalkan
+        // Return product stock if the order is canceled
         const product = await Product.findByPk(canceledOrder.id_product);
         if (product) {
           const updatedStock = product.stock + canceledOrder.quantity;
@@ -56,54 +74,8 @@ createOrder: async (req, res) => {
         console.log('Order canceled after timeout:', canceledOrder.id);
       }
     }, timeoutDuration);
-    // Kirim informasi pesanan ke email
-    const user = await User.findByPk(id_user);
-    console.log(user)
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'fauziramdhan38@gmail.com', // Your email address
-        pass: 'gskeghxoroktwmsg' // Your email password or an application-specific password
-      },
-      tls: {
-        rejectUnauthorized: true
-      }
-    });
 
-    const mailOptions = {
-      from: 'framdhan26@gmail.com',
-      to: user.email,
-      subject: 'New Order Confirmation',
-      html: `
-        <p>Hello, ${user.fullname}</p>
-        <p>Your order has been successfully placed with the following details:</p>
-        <p>id order: <strong>${product.id}</strong></p>
-        <p>Product: <strong>${product.name}</strong></p>
-        <p>Quantity: <strong>${quantity}</strong></p>
-        <p>Total Amount: <strong>${quantity * product.price}</strong></p>
-        <p>Payment Method: <strong>${payment_method}</strong></p>
-        <p>Notes: <strong>${notes}</strong></p>
-        <p>Status: <strong>booked</strong></p>
-        <p>Please ensure to keep this information for your reference. Thank you for shopping with us.</p>
-        <p>Best regards,</p>
-        <p>Sales App WGS Bootcamp</p>
-      `
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
-
-    // Hapus entri keranjang yang terkait dengan pesanan
-    await Cart.destroy({ where: { id_user, id_product } });
-
-    await logActivity({
+     await logActivity({
       timestamp: new Date(),
       activityType: 'Add Order',
       user: id_user,
@@ -112,22 +84,71 @@ createOrder: async (req, res) => {
       device: req.headers['user-agent'],
       status: 'Success',
     });
+      // Send confirmation email to the user
+      const user = await User.findByPk(id_user);
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        port: 465,
+        secure: true,
+        auth: {
+          user: 'fauziramdhan38@gmail.com', // Your email address
+          pass: 'gskeghxoroktwmsg' // Your email password or an application-specific password
+        },
+        tls: {
+          rejectUnauthorized: true
+        }
+      });
 
-    res.status(201).json({ success: true, data: order });
+      const mailOptions = {
+        from: 'framdhan26@gmail.com',
+        to: user.email,
+        subject: 'New Order Confirmation',
+        html: `
+          <p>Hello, ${user.fullname}</p>
+          <p>Your order has been successfully placed with the following details:</p>
+          <p>id order: <strong>${order.id}</strong></p>
+          <p>Product: <strong>${product.name}</strong></p>
+          <p>Quantity: <strong>${quantity}</strong></p>
+          <p>Total Amount: <strong>${quantity * product.price}</strong></p>
+          <p>Payment Method: <strong>${req.body.payment_method}</strong></p>
+          <p>Notes: <strong>${req.body.notes || 'N/A'}</strong></p>
+          <p>Status: <strong>booked</strong></p>
+          <p>Please ensure to keep this information for your reference. Thank you for shopping with us.</p>
+          <p>Best regards,</p>
+          <p>Sales App WGS Bootcamp</p>
+        `
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+    });
+
+    
+    // Wait for all order creation promises to complete
+    await Promise.all(orderPromises);
+
+    res.status(201).json({ message: 'Order created successfully.' });
   } catch (error) {
-    console.error(error);
+    console.error('Error creating order:', error);
       await logActivity({
       timestamp: new Date(),
       activityType: 'Add Order',
-      user: 'id_user',
-      details: 'Add Order',
+      user: id_user,
+      details: 'Error creating order',
       ipAddress: req.ip,
       device: req.headers['user-agent'],
       status: 'Success',
     });
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 },
+
+
 
   updateOrderStatus: async (req, res) => {
     try {

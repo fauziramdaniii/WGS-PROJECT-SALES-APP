@@ -6,13 +6,13 @@ const cartValidator = require('../validator/cartValidator');
 const cartController = require('../controllers/cartControllers');
 
 // Create a cart
-router.post('/cart', cartValidator.createCart, async (req, res) => {
+router.post('/cart', async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  cartController.createCart(req, res);
+  cartController.addToCart(req, res);
 });
 
 // Get all carts
@@ -23,6 +23,10 @@ router.post('/cart', cartValidator.createCart, async (req, res) => {
 router.get('/cart/:id', async (req, res) => {
   const { id } = req.params;
   cartController.getCartByUserId(req, res);
+});
+
+router.get('/cart', async (req, res) => {
+  cartController.getAllCarts(req, res);
 });
 
 // Update a cart by ID

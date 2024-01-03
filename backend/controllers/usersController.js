@@ -210,6 +210,7 @@ const UserController = {
 
       // Update user password in the database
       const user = await User.findOne({ where: { email } })
+      console.log(user)
       if (!user) {
         return res.status(404).json({ message: 'User not found' })
       }

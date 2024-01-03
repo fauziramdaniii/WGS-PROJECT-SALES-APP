@@ -49,6 +49,7 @@ const useUserStore = () => {
       const response = await apiService.byPostData('api/reset-password', {
         email
       })
+      console.log(response)
       return response.data
     } catch (error) {
       console.error('Error resetting password:', error)

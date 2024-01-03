@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { addCart } from '../../redux/action/action'
+import addToCartAsync from '../../stores/cart/CartStores'
 
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 import { Link, useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 const Products = () => {
   const [data, setData] = useState([])
@@ -13,20 +14,38 @@ const Products = () => {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState({})
+
   let componentMounted = true
 
   const dispatch = useDispatch()
-  const roles = localStorage.getItem('roles')
-  const token = localStorage.getItem('token')
-  const userId = localStorage.getItem('id_user')
 
   const navigate = useNavigate()
 
-  const addProduct = product => {
-    if (roles && token) {
-      dispatch(addCart(product, userId, token))
-    } else {
-      navigate('/login')
+  const handleAddToCart = async (productId, quantity) => {
+    try {
+      const id_user = localStorage.getItem('id_user')
+      const roles = localStorage.getItem('roles')
+      const token = localStorage.getItem('token')
+
+      if (!id_user || !roles || !token) {
+        // Navigate to login page if any of the required values is missing
+        console.error(
+          'User is not authenticated or missing necessary information.'
+        )
+        navigate('/login')
+        return
+      }
+
+      await dispatch(addToCartAsync(productId, quantity, id_user))
+      Swal.fire({
+        title: 'Add!',
+        text: 'Success Add To Cart',
+        icon: 'success',
+        timer: 1200
+      })
+    } catch (error) {
+      console.error('Error adding to cart:', error.message)
+      // Handle error, misalnya menampilkan notifikasi error kepada pengguna
     }
   }
 
@@ -170,7 +189,7 @@ const Products = () => {
                     </Link>
                     <button
                       className='btn btn-dark m-1'
-                      onClick={() => addProduct(product)}
+                      onClick={() => handleAddToCart(product.id, 1)}
                     >
                       Add to Cart
                     </button>

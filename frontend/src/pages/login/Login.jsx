@@ -11,20 +11,19 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { Container, Modal } from '@mui/material'
 import useAuthStores from '../../stores/auth/Auth'
+import useUserStore from '../../stores/user/AddUserStore'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 import { Message } from '@mui/icons-material'
 const Login = () => {
-  const { postLogin, handleSubmit, setEmail, setPassword, resetPassword } =
-    useAuthStores() // Mendapatkan fungsi postLogin, handleSubmit, setEmail, dan setPassword dari useAuthStores
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('')
+  const { postLogin, handleSubmit, setEmail, setPassword } = useAuthStores() // Mendapatkan fungsi postLogin, handleSubmit, setEmail, dan setPassword dari useAuthStores
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false)
-
+  const [email, setEmailPw] = useState('')
+  const { resetPassword } = useUserStore()
   const handleForgotPassword = async () => {
     // Call the API to reset the password
-    const response = await resetPassword(forgotPasswordEmail)
-    console.log(response.message)
+    const response = await resetPassword(email)
     const message = response.message
     Swal.fire({
       icon: 'success',
@@ -176,11 +175,7 @@ const Login = () => {
                         autoComplete='email'
                         autoFocus
                         type='email' // Tambahkan atribut type dengan nilai 'email'
-                        onChange={e => setEmail(e.target.value)}
-                        inputProps={{
-                          pattern: '[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$', // Gunakan pola regex untuk validasi email
-                          title: 'Enter a valid email address' // Tampilkan pesan ini jika pola tidak cocok
-                        }}
+                        onChange={e => setEmailPw(e.target.value)}
                       />
                       <Button
                         fullWidth

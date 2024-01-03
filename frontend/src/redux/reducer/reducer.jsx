@@ -1,7 +1,10 @@
 // reducer
-import handleCart from './handleCart'
 import { combineReducers } from 'redux'
-const rootReducers = combineReducers({
-  handleCart
+import cartReducer from './cartReducer' // Buat file cartReducer.js
+
+const rootReducer = combineReducers({
+  cart: cartReducer
+  // Tambahkan reducer lain jika diperlukan
 })
-export default rootReducers
+
+export default rootReducer

@@ -1,30 +1,29 @@
-// cartService.js
+import axios from 'axios'
+import { addToCart } from '../../redux/action/action'
+
 const API_URL = `${import.meta.env.VITE_API_URL}api`
 
-const addToCart = async (productId, quantity, userId, token) => {
-  try {
-    const response = await fetch(`${API_URL}/cart`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        id_product: productId,
-        quantity,
-        id_user: userId
+const addToCartAsync = (productId, quantity) => {
+  return async dispatch => {
+    try {
+      const userId = localStorage.getItem('id_user')
+      if (!userId) {
+        console.log('User is not authenticated or userId is not available.')
+        return
+      }
+
+      const response = await axios.post(`${API_URL}/cart`, {
+        id_user: parseInt(userId), // Pastikan mengonversi ke integer jika dibutuhkan
+        id_product: parseInt(productId), // Pastikan mengonversi ke integer jika dibutuhkan
+        quantity: parseInt(quantity) // Pastikan mengonversi ke integer jika dibutuhkan
       })
-    })
 
-    if (!response.ok) {
-      throw new Error('Failed to add item to cart')
+      dispatch(addToCart(response.data)) // Dispatch action ke reducer
+    } catch (error) {
+      console.error('Error adding to cart:', error.message)
+      throw error
     }
-
-    return response.json()
-  } catch (error) {
-    console.error('Error adding item to cart:', error)
-    throw error
   }
 }
 
-export default addToCart
+export default addToCartAsync

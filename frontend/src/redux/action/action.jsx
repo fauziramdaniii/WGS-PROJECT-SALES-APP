@@ -1,41 +1,75 @@
-// For Add Item to Cart action.jsx
-import addToCart from '../../stores/cart/CartStores'
+import axios from 'axios'
 
-const addCart = (product, userId, token) => {
-  return async dispatch => {
+const API_URL = `${import.meta.env.VITE_API_URL}api`
+
+const addToCartSuccess = product => ({
+  type: 'ADD_TO_CART',
+  payload: product
+})
+
+const getCartSuccess = cartItems => ({
+  type: 'GET_CART_SUCCESS',
+  payload: cartItems
+})
+
+const getCartFailure = error => ({
+  type: 'GET_CART_FAILURE',
+  payload: error
+})
+
+const addToCart = product => {
+  return async (dispatch, getState) => {
     try {
-      // Check the value of product before making the API call
-      console.log('Product:', product)
+      // Your existing logic to add item to the cart
+      dispatch(addToCartSuccess(product))
 
-      if (!product || !product.id) {
-        throw new Error('Product ID is undefined')
-      }
-
-      const response = await addToCart(
-        product.id,
-        1, // Assuming quantity is always 1 for this example
-        userId,
-        token
-      )
-
-      console.log(response)
-      dispatch({
-        type: 'ADDITEM',
-        payload: response.data // Assuming the response structure is correct
-      })
+      // Save the updated cart state to local storage
+      const updatedCart = getState().cart.cartItems.length
+      console.log(updatedCart)
     } catch (error) {
-      console.error('Error adding item to cart:', error)
-      // Handle error or dispatch an action to handle the error
+      console.error('Error adding to cart:', error.message)
+      // Handle error, misalnya menampilkan notifikasi error kepada pengguna
     }
   }
 }
 
-// For Delete Item to Cart
-const delCart = product => {
-  return {
-    type: 'DELITEM',
-    payload: product
+const removeFromCartFailure = error => ({
+  type: 'REMOVE_FROM_CART_FAILURE',
+  payload: error
+})
+
+const getCart = () => {
+  return async dispatch => {
+    try {
+      const id_user = localStorage.getItem('id_user')
+      const response = await axios.get(`${API_URL}/cart/${id_user}`)
+      if (response.data.success) {
+        dispatch(getCartSuccess(response.data.data))
+      } else {
+        throw new Error(response.data.error || 'Failed to get cart')
+      }
+    } catch (error) {
+      console.error('Error getting cart:', error.message)
+      dispatch(getCartFailure(error.message))
+    }
   }
 }
 
-export { addCart, delCart }
+const incrementItemQuantity = productId => ({
+  type: 'INCREMENT_ITEM_QUANTITY',
+  payload: productId
+})
+
+const decrementItemQuantity = productId => ({
+  type: 'DECREMENT_ITEM_QUANTITY',
+  payload: productId
+})
+
+export {
+  addToCart,
+  getCartSuccess,
+  getCartFailure,
+  getCart,
+  incrementItemQuantity,
+  decrementItemQuantity
+}
