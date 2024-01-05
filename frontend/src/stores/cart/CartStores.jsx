@@ -7,9 +7,9 @@ const addToCartAsync = (productId, quantity) => {
   return async dispatch => {
     try {
       const userId = localStorage.getItem('id_user')
+
       if (!userId) {
-        console.log('User is not authenticated or userId is not available.')
-        return
+        console.log('Authenticaded False')
       }
 
       const response = await axios.post(`${API_URL}/cart`, {

@@ -33,11 +33,6 @@ const addToCart = product => {
   }
 }
 
-const removeFromCartFailure = error => ({
-  type: 'REMOVE_FROM_CART_FAILURE',
-  payload: error
-})
-
 const getCart = () => {
   return async dispatch => {
     try {
@@ -60,10 +55,53 @@ const incrementItemQuantity = productId => ({
   payload: productId
 })
 
-const decrementItemQuantity = productId => ({
-  type: 'DECREMENT_ITEM_QUANTITY',
+const decrementItemQuantity = productId => {
+  return (dispatch, getState) => {
+    const state = getState()
+    const item = state.cart.cartItems.find(item => item.id === productId)
+
+    if (item && item.quantity > 1) {
+      dispatch({
+        type: 'DECREMENT_ITEM_QUANTITY',
+        payload: productId
+      })
+    } else if (item) {
+      // Jika jumlah mencapai 1, hapus item dari keranjang
+      const id_cart = item.id
+      dispatch(removeFromCartApi(id_cart))
+    }
+  }
+}
+
+const removeFromCartSuccess = productId => ({
+  type: 'REMOVE_FROM_CART',
   payload: productId
 })
+
+const removeFromCartApi = id_cart => {
+  return async dispatch => {
+    try {
+      // Make an API request to remove the item from the server
+      const response = await axios.delete(`${API_URL}/cart/${id_cart}`)
+
+      // Check if the API request was successful
+      if (response.data.success) {
+        // Dispatch the success action to update the state locally
+        dispatch(removeFromCartSuccess(id_cart))
+        // Additionally, fetch the updated cart after successful removal
+        dispatch(getCart())
+      } else {
+        throw new Error(
+          response.data.error || 'Failed to remove item from the cart'
+        )
+      }
+    } catch (error) {
+      console.error('Error removing from cart:', error.message)
+      // Dispatch the failure action to handle errors
+      dispatch(removeFromCartFailure(error.message))
+    }
+  }
+}
 
 export {
   addToCart,
@@ -71,5 +109,6 @@ export {
   getCartFailure,
   getCart,
   incrementItemQuantity,
-  decrementItemQuantity
+  decrementItemQuantity,
+  removeFromCartApi
 }

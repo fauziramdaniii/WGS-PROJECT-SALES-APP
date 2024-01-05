@@ -78,6 +78,7 @@ const useAuthStores = () => {
           localStorage.removeItem('roles')
           localStorage.removeItem('token')
           localStorage.removeItem('id_user')
+
           authContext.setUserRole(null)
 
           Swal.fire({

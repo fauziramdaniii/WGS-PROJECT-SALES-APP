@@ -56,7 +56,7 @@ const cartController = {
       console.error(error);
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
-  },
+  }, 
 
   getAllCarts: async (req, res) => {
   try {

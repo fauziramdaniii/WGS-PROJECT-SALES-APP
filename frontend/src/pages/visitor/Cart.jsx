@@ -16,10 +16,22 @@ const Cart = () => {
   const { getTerm } = useTermAndConditionStores()
   const dispatch = useDispatch()
   const cartItems = useSelector(state => state.cart.cartItems)
-  console.log(cartItems, 'di cart')
+  // console.log(cartItems, 'di cart')
+  const [localCartItems, setLocalCartItems] = useState([])
+
   useEffect(() => {
     dispatch(getCart())
   }, [dispatch])
+
+  useEffect(() => {
+    setLocalCartItems(cartItems)
+  }, [cartItems])
+
+  const removeItemFromLocalCart = productId => {
+    setLocalCartItems(prevItems =>
+      prevItems.filter(item => item.id !== productId)
+    )
+  }
 
   const EmptyCart = () => {
     return (
@@ -75,6 +87,7 @@ const Cart = () => {
           notes: 'Collect at Store'
         }
       )
+      dispatch(getCart())
 
       console.log(response)
       if (response.status !== 201) {
@@ -95,12 +108,12 @@ const Cart = () => {
       return item.quantity * (item.product?.price || 0)
     }
 
-    const totalItems = cartItems.reduce(
+    const totalItems = localCartItems.reduce(
       (total, item) => total + item.quantity,
       0
     )
 
-    const subtotal = cartItems.reduce(
+    const subtotal = localCartItems.reduce(
       (total, item) => total + calculateTotal(item),
       0
     )
@@ -110,8 +123,10 @@ const Cart = () => {
     }
 
     const decrementItem = item => {
-      // Dispatch an action to decrement the quantity in the Redux store
       dispatch(decrementItemQuantity(item.id))
+      if (item.quantity === 1) {
+        removeItemFromLocalCart(item.id)
+      }
     }
 
     return (
@@ -126,7 +141,7 @@ const Cart = () => {
                     <h5 className='mb-0'>Item List</h5>
                   </div>
                   <div className='card-body'>
-                    {cartItems.map(item => (
+                    {localCartItems.map(item => (
                       <div key={item.id}>
                         <div className='row d-flex align-items-center'>
                           <div className='col-lg-3 col-md-12'>
@@ -136,7 +151,7 @@ const Cart = () => {
                             >
                               <img
                                 src={`${import.meta.env.VITE_API_URL}uploads/${
-                                  item.product.image || ''
+                                  item.product?.image || ''
                                 }`}
                                 alt={item.title}
                                 style={{

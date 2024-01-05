@@ -19,7 +19,7 @@ const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         cartItems: state.cartItems.map(item =>
-          item.id === action.payload
+          item.id === action.payload && item.quantity < 5
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
@@ -33,6 +33,15 @@ const cartReducer = (state = initialState, action) => {
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
+      }
+
+    case 'REMOVE_FROM_CART':
+      const updatedCartItems = state.cartItems.filter(
+        item => item.id !== action.payload
+      )
+      return {
+        ...state,
+        cartItems: updatedCartItems
       }
 
     default:

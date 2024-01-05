@@ -7,17 +7,23 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
-
+import { useSelector } from 'react-redux'
+import { getCart } from '../../redux/action/action'
 const Products = () => {
   const [data, setData] = useState([])
   const [filter, setFilter] = useState(data)
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState({})
+  const cartItems = useSelector(state => state.cart.cartItems)
+  console.log(cartItems, 'di product')
 
   let componentMounted = true
 
   const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getCart())
+  }, [dispatch])
 
   const navigate = useNavigate()
 
@@ -43,6 +49,22 @@ const Products = () => {
         icon: 'success',
         timer: 1200
       })
+
+      dispatch(getCart())
+
+      const existingItem = await cartItems.find(
+        item => item.id_product === productId
+      )
+      console.log(existingItem)
+      if (existingItem.quantity + quantity >= 5) {
+        Swal.fire({
+          title: 'Maximum Quantity Reached',
+          text: 'You can only add up to 5 of the same item.',
+          icon: 'error',
+          timer: 2000
+        })
+        return
+      }
     } catch (error) {
       console.error('Error adding to cart:', error.message)
       // Handle error, misalnya menampilkan notifikasi error kepada pengguna

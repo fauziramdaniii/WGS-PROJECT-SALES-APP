@@ -7,13 +7,15 @@ import Navbar from '../../components/visitor/Navbar'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import addToCartAsync from '../../stores/cart/CartStores'
+import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 const Product = () => {
   const { id } = useParams()
-  const [product, setProduct] = useState([])
   const [loading, setLoading] = useState(false)
+  const [product, setProduct] = useState({ addedToCart: false })
   const [showFullDescription, setShowFullDescription] = useState({})
-
+  const navigate = useNavigate()
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true)
@@ -154,15 +156,27 @@ const Product = () => {
   const handleAddToCart = async (productId, quantity) => {
     try {
       const id_user = localStorage.getItem('id_user')
-      if (!id_user) {
-        // Handle case where user is not authenticated or id_user is not available
-        console.error('User is not authenticated or id_user is not available.')
+      const roles = localStorage.getItem('roles')
+      const token = localStorage.getItem('token')
+
+      if (!id_user || !roles || !token) {
+        // Navigate to login page if any of the required values is missing
+        console.error(
+          'User is not authenticated or missing necessary information.'
+        )
+        navigate('/login')
         return
       }
 
       await dispatch(addToCartAsync(productId, quantity, id_user))
+      Swal.fire({
+        title: 'Add!',
+        text: 'Success Add To Cart',
+        icon: 'success',
+        timer: 1200
+      })
+
       console.log('Product added to cart successfully')
-      // Tambahkan logika atau notifikasi sesuai kebutuhan
     } catch (error) {
       console.error('Error adding to cart:', error.message)
       // Handle error, misalnya menampilkan notifikasi error kepada pengguna
