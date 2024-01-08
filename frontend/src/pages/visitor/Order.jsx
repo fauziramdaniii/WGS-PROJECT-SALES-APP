@@ -25,13 +25,14 @@ const Order = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}api/order/${id_user}`
         )
+        console.log(response)
         setDataOrder(response.data.data)
       } catch (error) {
         console.error('error fetching data: ', error)
       }
     }
     fetchData()
-  }, [getOrderProduct])
+  }, [])
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -63,6 +64,7 @@ const Order = () => {
               <TableRow>
                 <TableCell className='tableCell'>Tracking ID</TableCell>
                 <TableCell className='tableCell'>Product</TableCell>
+                <TableCell className='tableCell'>Quantity</TableCell>
                 <TableCell className='tableCell'>Date</TableCell>
                 <TableCell className='tableCell'>Amount</TableCell>
                 <TableCell className='tableCell'>Method</TableCell>
@@ -90,6 +92,9 @@ const Order = () => {
                       />
                       {row.product.name}
                     </div>
+                  </TableCell>
+                  <TableCell className='tableCell text-center'>
+                    {row.quantity}
                   </TableCell>
                   <TableCell className='tableCell'>
                     {new Date(row.order_date).toLocaleDateString()}

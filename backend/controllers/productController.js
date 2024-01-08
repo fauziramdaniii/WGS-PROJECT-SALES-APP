@@ -43,7 +43,8 @@ const getProducts = async (req, res) => {
         model: Category,
         as: 'category',
         attributes: ['name']
-      }]
+      }],
+      order: [['createdAt', 'DESC']],
     });
     res.status(200).json(products);
   } catch (error) {

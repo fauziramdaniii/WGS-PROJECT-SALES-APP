@@ -109,16 +109,9 @@ const Sidebar = () => {
                 <span>Logs</span>
               </li>
             </Link>
-            <Link to='/admin/term-condition' style={{ textDecoration: 'none' }}>
-              <li>
-                <SettingsIcon className='icon' />
-                <span>Term Condition</span>
-              </li>
-            </Link>
-            <p className='title'>USER</p>
             <Link to='/admin/setting' style={{ textDecoration: 'none' }}>
               <li>
-                <PermContactCalendarRoundedIcon className='icon' />
+                <SettingsIcon className='icon' />
                 <span>Setting</span>
               </li>
             </Link>
@@ -129,11 +122,6 @@ const Sidebar = () => {
           </ul>
         )}
       </div>
-      {/* <div className='bottom'>
-        <div className='colorOption'></div>
-        <div className='colorOption'></div>
-        <div className='colorOption'></div>
-      </div> */}
     </div>
   )
 }

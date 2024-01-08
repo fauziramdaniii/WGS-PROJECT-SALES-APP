@@ -13,6 +13,18 @@ const fetchCategory = async () => {
         field: 'name',
         headerName: 'Name',
         width: 150
+      },
+      {
+        field: 'image',
+        headerName: 'Image',
+        width: 120,
+        renderCell: params => (
+          <img
+            src={`${import.meta.env.VITE_API_URL}uploads/${params.value}`}
+            alt={params.value}
+            style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Adjust the size as needed
+          />
+        )
       }
     ]
 

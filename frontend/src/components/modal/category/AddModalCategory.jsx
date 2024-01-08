@@ -7,10 +7,12 @@ import useCategoryStore from '../../../stores/category/CategoryStore'
 
 const AddModalCategory = ({ isOpen, onClose, onSubmit }) => {
   const dataCategory = {
-    name: ''
+    name: '',
+    image: ''
   }
 
   const [category, setCategory] = useState(dataCategory)
+  const [imageFile, setImageFile] = useState(null)
 
   const { createCategory } = useCategoryStore()
 
@@ -21,9 +23,19 @@ const AddModalCategory = ({ isOpen, onClose, onSubmit }) => {
     })
   }
 
+  const handleImageChange = e => {
+    const file = e.target.files[0]
+    console.log(file)
+    setImageFile(file)
+  }
+
   const handleSave = async () => {
     try {
-      const response = await createCategory(category)
+      const formData = new FormData()
+      formData.append('name', category.name)
+      formData.append('image', imageFile)
+
+      const response = await createCategory(formData)
 
       if (response.status === 201) {
         new Swal({
@@ -95,6 +107,16 @@ const AddModalCategory = ({ isOpen, onClose, onSubmit }) => {
                 autoFocus
                 value={category.name}
                 onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className='mb-3' controlId='image'>
+              <Form.Label>Image</Form.Label>
+              <Form.Control
+                type='file'
+                name='image'
+                accept='image/*' // Allow only image files
+                encType='multipart/form-data'
+                onChange={handleImageChange}
               />
             </Form.Group>
           </div>

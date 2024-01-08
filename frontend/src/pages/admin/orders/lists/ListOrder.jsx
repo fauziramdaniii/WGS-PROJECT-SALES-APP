@@ -23,10 +23,6 @@ const ListOrder = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
-  useEffect(() => {
-    fetchData()
-  }, [])
-
   const fetchData = async () => {
     try {
       const response = await getOrder()
@@ -36,6 +32,10 @@ const ListOrder = () => {
       console.error('error fetching data: ', error)
     }
   }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const formatToRupiah = amount => {
     const formatter = new Intl.NumberFormat('id-ID', {
@@ -94,6 +94,7 @@ const ListOrder = () => {
                   <TableRow>
                     <TableCell className='tableCell'>Tracking ID</TableCell>
                     <TableCell className='tableCell'>Product</TableCell>
+                    <TableCell className='tableCell'>Quantity</TableCell>
                     <TableCell className='tableCell'>Date</TableCell>
                     <TableCell className='tableCell'>Amount</TableCell>
                     <TableCell className='tableCell'>Method</TableCell>
@@ -121,6 +122,9 @@ const ListOrder = () => {
                           />
                           {row.product.name}
                         </div>
+                      </TableCell>
+                      <TableCell className='tableCell'>
+                        {row.quantity}
                       </TableCell>
                       <TableCell className='tableCell'>
                         {row.order_date}

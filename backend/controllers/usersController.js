@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const { Op } = require('sequelize')
 const nodemailer = require('nodemailer')
 const { logActivity } = require('../utils/logactivity')
+const crypto = require('crypto');
 
 // Import Validator From Dir Validator
 const {
@@ -18,45 +19,48 @@ const UserController = {
     ...createUserValidator,
     async (req, res) => {
       try {
-        const { username, email, password, roles, fullname, city } = req.body
+          const { username, email, roles, fullname, city } = req.body;
 
-        // Check if email already exists in the database
-        const existingUser = await User.findOne({
-          where: {
-            email: email.toLowerCase()
-          }
-        })
+      // Generate a random password
+      const randomPassword = generateRandomPassword();
 
-        if (existingUser) {
-          return res.status(400).json({ error: 'Email already exists' })
-        }
+      // Hash the random password using bcrypt
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
-        // Hash the password using bcrypt
-        const hashedPassword = await bcrypt.hash(password, 10)
-
-        // Create a new user with the hashed password
-        const newUser = await User.create({
-          username,
+      // Check if email already exists in the database
+      const existingUser = await User.findOne({
+        where: {
           email: email.toLowerCase(),
-          password: hashedPassword,
-          roles,
-          fullname,
-          city
-        })
+        },
+      });
 
-        const userResponse = {
-          id: newUser.id,
-          username: newUser.username,
-          email: newUser.email,
-          roles: newUser.roles,
-          fullname: newUser.fullname,
-          city: newUser.city
-          // Add other fields as needed
-        }
+      if (existingUser) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
 
-        sendNewUserByEmail(newUser.email, userResponse, password)
+      // Create a new user with the hashed password
+      const newUser = await User.create({
+        username,
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        roles,
+        fullname,
+        city,
+      });
 
-        await logActivity({
+      const userResponse = {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+        roles: newUser.roles,
+        fullname: newUser.fullname,
+        city: newUser.city,
+        // Add other fields as needed
+      };
+
+      sendNewUserByEmail(newUser.email, userResponse, randomPassword);
+
+      await logActivity({
         timestamp: new Date(),
         activityType: 'Add User',
         user: 'id_user',
@@ -64,14 +68,19 @@ const UserController = {
         ipAddress: req.ip,
         device: req.headers['user-agent'],
         status: 'Success',
-    });
-    
-        res.status(201).json(userResponse)
-      } catch (error) {
-        console.error(error)
-        res.status(500).json({ error: 'Internal Server Error' })
-      }
-      function sendNewUserByEmail (email, userData, password) {
+      });
+
+      res.status(201).json(userResponse);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    function generateRandomPassword() {
+      // Generate a random string of 8 characters
+      return crypto.randomBytes(6).toString('hex');
+    }
+        function sendNewUserByEmail (email, userData, password) {
         const transporter = nodemailer.createTransport({
           service: 'gmail',
           port: 465,

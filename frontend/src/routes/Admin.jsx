@@ -20,9 +20,6 @@ import ListOrder from '../pages/admin/orders/lists/ListOrder'
 // Menu Log
 import ListLog from '../pages/admin/log/lists/listLog'
 
-// Menu Term n Condition
-import ListTerm from '../pages/admin/termCondition/lists/ListTerm'
-
 // Menu Setting/Config
 import ListConfig from '../pages/admin/config/ListConfig'
 
@@ -51,10 +48,6 @@ const Admin = () => {
       </Route>
       <Route path='log'>
         <Route index element={<ListLog />} />
-        <Route path=':orderId' element={<Single />} />
-      </Route>
-      <Route path='term-condition'>
-        <Route index element={<ListTerm />} />
         <Route path=':orderId' element={<Single />} />
       </Route>
       <Route path='setting'>

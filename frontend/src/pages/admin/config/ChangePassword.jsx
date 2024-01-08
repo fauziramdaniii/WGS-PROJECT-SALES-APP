@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')

@@ -28,7 +28,7 @@ const addToCart = product => {
       console.log(updatedCart)
     } catch (error) {
       console.error('Error adding to cart:', error.message)
-      // Handle error, misalnya menampilkan notifikasi error kepada pengguna
+      throw error
     }
   }
 }

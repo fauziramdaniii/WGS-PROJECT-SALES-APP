@@ -62,7 +62,7 @@ const updateTermCondition = async (req, res) => {
     termCondition.content = content;
     await termCondition.save();
 
-    res.json(termCondition);
+    res.status(200).json(termCondition);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });

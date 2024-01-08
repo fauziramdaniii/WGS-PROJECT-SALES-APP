@@ -4,32 +4,10 @@ const useTermAndConditionStores = () => {
   const getTerm = async () => {
     try {
       const response = await apiService.byGetData('api/term-conditions')
+      console.log('getTerm response:', response)
       return response
     } catch (error) {
       console.error('Error fetching term:', error)
-      throw error
-    }
-  }
-
-  const getTermById = async id => {
-    try {
-      const response = await apiService.byGetData('api/term-conditions/' + id)
-      return response
-    } catch (error) {
-      console.error('Error fetching term:', error)
-      throw error
-    }
-  }
-
-  const createTerm = async userData => {
-    try {
-      const response = await apiService.byPostData(
-        'api/term-conditions',
-        userData
-      )
-      return response
-    } catch (error) {
-      console.error('Error creating user:', error)
       throw error
     }
   }
@@ -40,7 +18,7 @@ const useTermAndConditionStores = () => {
         `api/term-conditions/${id}`,
         updatedData
       )
-
+      console.log('updateTerm response:', response)
       return response
     } catch (error) {
       console.error('Error updating term:', error)
@@ -48,24 +26,9 @@ const useTermAndConditionStores = () => {
     }
   }
 
-  const deleteTerm = async id => {
-    try {
-      const response = await apiService.byDeleteData(
-        `api/term-conditions/${id}`
-      )
-      return response
-    } catch (error) {
-      console.error('Error Deleting term:', error)
-      throw error
-    }
-  }
-
   return {
     getTerm,
-    getTermById,
-    createTerm,
-    updateTerm,
-    deleteTerm
+    updateTerm
   }
 }
 

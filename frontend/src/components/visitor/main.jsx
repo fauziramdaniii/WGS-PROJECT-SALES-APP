@@ -17,9 +17,7 @@ const Home = () => {
                 New Season Arrivals
               </h5>
               <p className='card-text fs-5 d-none d-sm-block '>
-                This is a wider card with supporting text below as a natural
-                lead-in to additional content. This content is a little bit
-                longer.
+                Introduce Andromeda Urban Styles as a trendsetting fashion brand
               </p>
             </div>
           </div>

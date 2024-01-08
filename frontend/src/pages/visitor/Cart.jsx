@@ -155,7 +155,7 @@ const Cart = () => {
                                 }`}
                                 alt={item.title}
                                 style={{
-                                  height: '200px',
+                                  height: '300px',
                                   objectFit: 'cover'
                                 }}
                               />
@@ -166,10 +166,7 @@ const Cart = () => {
                             <p>
                               <strong>{item.product?.name || ''}</strong>
                             </p>
-                            <div
-                              className='d-flex mb-4'
-                              style={{ maxWidth: '300px' }}
-                            >
+                            <div className='d-flex ml-4 '>
                               <button
                                 className='btn px-3'
                                 onClick={() => {
@@ -190,7 +187,7 @@ const Cart = () => {
                             </div>
                             <p className='text-start text-md-center'>
                               <strong>
-                                <span className='text-muted'>
+                                <span className='text-muted   '>
                                   {item.quantity}
                                 </span>{' '}
                                 x {formatToRupiah(item.product?.price || 0)}

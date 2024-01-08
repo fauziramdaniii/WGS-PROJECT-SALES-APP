@@ -6,37 +6,67 @@ const { Order } = require('../models/order')
 const { logActivity } = require('../utils/logactivity')
  
 const cartController = {
- addToCart: async (req, res) => {
-  try {
-    const { id_user, id_product, quantity } = req.body;
+  addToCart: async (req, res) => {
+    try {
+      const { id_user, id_product, quantity } = req.body;
+      const product = await Product.findByPk(id_product);
 
-    // Check if the product is already in the user's cart
-    let cartItem = await Cart.findOne({
-      where: {
-        id_user,
-        id_product,
-      },
-    });
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
 
-    if (cartItem) {
-      // If the product is already in the cart, update the quantity
-      cartItem.quantity += quantity;
-      await cartItem.save();
-    } else {
-      // If the product is not in the cart, create a new cart item
-      await Cart.create({
-        id_user,
-        id_product,
-        quantity,
+      let cartItem = await Cart.findOne({
+        where: {
+          id_user,
+          id_product,
+        },
       });
-    }
 
-    res.status(201).json({ message: 'Product added to cart successfully.' });
-  } catch (error) {
-    console.error('Error adding product to cart:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-},
+      if (cartItem) {
+        // If the product is already in the cart, update the quantity
+        cartItem.quantity += quantity;
+
+        // Check if the updated quantity exceeds available stock
+        if (cartItem.quantity > product.stock) {
+          return res.status(400).json({ error: 'Stock is Not Enough' });
+        }
+
+        if (cartItem.quantity >= 5) {
+          return res.status(400).json({ error: 'cart max to 5 of the same item' });
+        }
+
+        await cartItem.save();
+      } else {
+        // If the product is not in the cart, create a new cart item
+        // Check if the requested quantity exceeds available stock
+        if (quantity > product.stock) {
+          return res.status(400).json({ error: 'Insufficient stock' });
+        }
+
+        await Cart.create({
+          id_user,
+          id_product,
+          quantity,
+        });
+      }
+
+      await logActivity({
+        timestamp: new Date(),
+        activityType: 'Delete Cart',
+        user: id_user,
+        details: 'Delete Cart',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+      });
+
+      return res.status(201).json({ message: 'Product added to cart successfully.' });
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+  
   getCartByUserId: async (req, res) => {
     try {
       const { id } = req.params; // Dapatkan ID pengguna dari parameter URL atau dari mana pun yang sesuai dengan struktur endpoint Anda
@@ -57,7 +87,7 @@ const cartController = {
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
   }, 
-
+  
   getAllCarts: async (req, res) => {
   try {
     const cartItems = await Cart.findAll({
@@ -76,7 +106,7 @@ const cartController = {
     console.error(error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
-},
+  },
 
   deleteCart: async (req, res) => {
     try {

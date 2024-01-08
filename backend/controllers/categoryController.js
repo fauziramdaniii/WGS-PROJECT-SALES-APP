@@ -52,8 +52,7 @@ createCategory = async (req, res) => {
         status: 'Success',
       });
 
-    // Jika kategori belum ada, buat dan kirim respons berhasil
-    const newCategory = await Category.create({ name });
+    const newCategory = await Category.create({ name, image: req.file.filename  });
     res.status(201).json(newCategory);
   } catch (error) {
     console.error(error);
@@ -72,14 +71,14 @@ createCategory = async (req, res) => {
 
 updateCategory = async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, image } = req.body;
   try {
     const category = await Category.findByPk(id);
     if (!category) {
       return res.status(404).json({ error: 'Category not found' });
     }
    
-    await category.update({ name });
+    await category.update({ name, image: req.file.filename });
     res.json(category);
   } catch (error) {
     console.error(error);

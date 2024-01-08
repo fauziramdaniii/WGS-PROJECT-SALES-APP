@@ -6,6 +6,7 @@ const { User } = require('../models/user')
 const { logActivity } = require('../utils/logactivity')
 const nodemailer = require('nodemailer')
 const { AppConfig } = require('../models/appconfig')
+const { Op } = require('sequelize');
 
 const orderController = {
 
@@ -148,8 +149,6 @@ createOrder: async (req, res) => {
   }
 },
 
-
-
   updateOrderStatus: async (req, res) => {
     try {
       const { id } = req.params;
@@ -186,43 +185,43 @@ createOrder: async (req, res) => {
     }
   },
 
- getOrder: async (req, res) => {
-  try {
-    const order = await Order.findAll({
-      attributes: [
-        'id',
-        'id_user',
-        'id_product',
-        'order_date',
-        'status',
-        'total_amount',
-        'quantity',
-        'payment_method',
-      ],
-      include: [
-        {
-          model: Product,
-          as: 'product',
-          attributes: ['name', 'price', 'image'],
-        },
-      ],
-      order: [['order_date', 'DESC']],
-    });
+  getOrder: async (req, res) => {
+    try {
+      const order = await Order.findAll({
+        attributes: [
+          'id',
+          'id_user',
+          'id_product',
+          'order_date',
+          'status',
+          'total_amount',
+          'quantity',
+          'payment_method',
+        ],
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['name', 'price', 'image'],
+          },
+        ],
+        order: [['order_date', 'DESC']],
+      });
 
-    // Format the date in dd-mm-yyyy
-    const formattedOrder = order.map((item) => {
-      return {
-        ...item.toJSON(),
-        order_date: new Date(item.order_date).toLocaleDateString('en-GB'),
-      };
-    });
+      // Format the date in dd-mm-yyyy
+      const formattedOrder = order.map((item) => {
+        return {
+          ...item.toJSON(),
+          order_date: new Date(item.order_date).toLocaleDateString('en-GB'),
+        };
+      });
 
-    res.status(200).json({ success: true, data: formattedOrder });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-},
+      res.status(200).json({ success: true, data: formattedOrder });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  },
 
    getOrderByUserId: async (req, res) => {
     try {

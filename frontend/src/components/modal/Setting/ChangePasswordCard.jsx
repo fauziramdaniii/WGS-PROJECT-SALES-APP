@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Button, Modal } from 'react-bootstrap'
-import ChangePasswordModal from './ChangePasswordModal' // Assuming you have a separate modal component
+import ChangePasswordModal from './ChangePasswordModal'
 
 const ChangePasswordCard = () => {
   const [showModal, setShowModal] = useState(false)
@@ -14,14 +14,10 @@ const ChangePasswordCard = () => {
   }
 
   return (
-    <>
-      <Card
-        style={{
-          maxWidth: '400px',
-          justifyContent: 'left',
-          marginTop: '45px'
-        }}
-      >
+    <div className='col-md-6'>
+      {' '}
+      {/* Use Bootstrap responsive grid class */}
+      <Card>
         <Card.Body>
           <div>
             <h3>Change Password</h3>
@@ -32,9 +28,8 @@ const ChangePasswordCard = () => {
           </Button>
         </Card.Body>
       </Card>
-
       <ChangePasswordModal show={showModal} onClose={handleCloseModal} />
-    </>
+    </div>
   )
 }
 

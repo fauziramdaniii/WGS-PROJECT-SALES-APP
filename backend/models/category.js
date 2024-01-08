@@ -12,6 +12,10 @@ const Category = sequelize.define(
       allowNull: false,
       unique: true,
     },
+    image: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
   },
   {
     timestamps: true,

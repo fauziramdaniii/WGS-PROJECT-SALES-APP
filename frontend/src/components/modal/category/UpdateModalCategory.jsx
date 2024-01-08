@@ -4,6 +4,7 @@ import { Modal, Button, Form } from 'react-bootstrap'
 
 const UpdateModalCategory = ({ isOpen, onClose, onUpdate, categoryData }) => {
   const [updatedData, setUpdatedData] = useState(categoryData || {})
+  const [imageFile, setImageFile] = useState(null)
 
   useEffect(() => {
     setUpdatedData(categoryData || {})
@@ -17,9 +18,14 @@ const UpdateModalCategory = ({ isOpen, onClose, onUpdate, categoryData }) => {
     }))
   }
 
+  const handleImageChange = e => {
+    const file = e.target.files[0]
+    setImageFile(file)
+  }
+
   const handleSubmit = e => {
     e.preventDefault()
-    onUpdate(categoryData.id, updatedData)
+    onUpdate(categoryData.id, updatedData, imageFile)
     onClose()
   }
 
@@ -39,6 +45,16 @@ const UpdateModalCategory = ({ isOpen, onClose, onUpdate, categoryData }) => {
               value={updatedData.name || ''}
               onChange={handleChange}
               required
+            />
+          </Form.Group>
+          <Form.Group controlId='image' className='mb-3'>
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type='file'
+              name='image'
+              accept='image/*' // Allow only image files
+              encType='multipart/form-data'
+              onChange={handleImageChange} // Remove value prop
             />
           </Form.Group>
         </Form>

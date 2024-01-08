@@ -101,9 +101,20 @@ const DataTable = () => {
     setUpdateOpenModal(false)
   }
 
-  const handleUpdate = async (id, updatedData) => {
+  const handleUpdate = async (id, updatedData, imageFile) => {
     try {
-      await updateCategory(id, updatedData)
+      const formData = new FormData()
+      Object.keys(updatedData).forEach(key => {
+        formData.append(key, updatedData[key])
+      })
+
+      if (imageFile) {
+        formData.append('image', imageFile)
+      }
+      console.log(imageFile)
+      console.log(formData)
+      await updateCategory(id, formData)
+
       const updatedRows = data.map(row =>
         row.id === id ? { ...row, ...updatedData } : row
       )

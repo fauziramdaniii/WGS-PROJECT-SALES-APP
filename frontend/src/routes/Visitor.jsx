@@ -23,6 +23,8 @@ const Visitor = () => {
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/product' element={<Products />} />
+      <Route path='/category' element={<Products />} />
+      <Route path='/category/:id' element={<Products />} />
       <Route path='/product/:id' element={<Product />} />
       <Route path='/about' element={<AboutPage />} />
       <Route path='/contact' element={<ContactPage />} />

@@ -22,7 +22,7 @@ const BasicTable = () => {
     }
 
     fetchData()
-  }, [getOrder])
+  }, [])
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)

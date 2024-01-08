@@ -1,10 +1,9 @@
 // userValidator.js
 const { body, param, validationResult } = require('express-validator');
-
 const createUserValidator = [
   body('username').notEmpty().withMessage('Username is required'),
   body('email').isEmail().withMessage('Invalid email address'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  // body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
   body('roles').notEmpty().withMessage('Roles is required'), // Validation for the roles field
 
   (req, res, next) => {

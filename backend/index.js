@@ -23,7 +23,7 @@ const logRoutes = require('./routes/logRoutes')
 const termConditionRoutes = require('./routes/termCondition')
 const appConfigRoutes = require('./routes/appConfigRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes')
-
+const contactUsRoutes = require('./routes/contactUsRoutes');
 // Routes Create
 app.use('/auth',  authRoute);
 app.use('/api', userRoute);
@@ -35,6 +35,7 @@ app.use('/api', logRoutes)
 app.use('/api', termConditionRoutes);
 app.use('/api', appConfigRoutes);
 app.use('/api', dashboardRoutes)
+app.use('/api', contactUsRoutes);
 // Listen Server
 const PORT = process.env.PORT || 3002;
   app.listen(PORT, () => {

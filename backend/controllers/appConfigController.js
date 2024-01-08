@@ -67,6 +67,8 @@ const appConfigController = {
       });
     }
   },
+
+  
 };
 
 module.exports = appConfigController;

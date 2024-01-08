@@ -49,7 +49,7 @@ const GetTotalAmountToday = async () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0 for the start of the day
 
-        console.log(today)
+        console.log(today);
         const totalAmountToday = await Order.sum('total_amount', {
             where: {
                 order_date: {
@@ -69,7 +69,7 @@ const GetTotalAmountLastWeek = async () => {
         const lastWeek = new Date();
         lastWeek.setDate(lastWeek.getDate() - 7);
         lastWeek.setHours(0, 0, 0, 0);
-
+        console.log(lastWeek);
         const totalAmountLastWeek = await Order.sum('total_amount', {
             where: {
                 order_date: {
@@ -90,7 +90,7 @@ const GetTotalAmountLastMonth = async () => {
         const lastMonth = new Date();
         lastMonth.setMonth(lastMonth.getMonth() - 1);
         lastMonth.setHours(0, 0, 0, 0);
-
+        console.log(lastMonth);
         const totalAmountLastMonth = await Order.sum('total_amount', {
             where: {
                 order_date: {
@@ -126,11 +126,12 @@ const GetTotalAmountLast3Months = async () => {
                 },
             },
             group: ['month'],
+            order: [[Sequelize.fn('date_trunc', 'month', Sequelize.col('order_date')), 'DESC']], // Order by month in descending order
             raw: true,
         });
 
         return totalAmountLast3Months.map((entry) => ({
-            month: new Date(entry.month).toLocaleString('en-us', { month: 'long' }),
+            month: new Date(entry.month).toLocaleString('en-US', { month: 'long' }),
             total_amount: entry.total_amount || 0,
         }));
     } catch (error) {
@@ -138,6 +139,8 @@ const GetTotalAmountLast3Months = async () => {
         throw error;
     }
 };
+
+
 
 module.exports = {
     countUser,
