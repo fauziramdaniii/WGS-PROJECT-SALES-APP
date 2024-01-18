@@ -9,8 +9,6 @@ const AddUserFormModal = ({ isOpen, onClose, onSubmit }) => {
   const initialUserData = {
     username: '',
     email: '',
-    password: '',
-    confirmPassword: '', // New state for confirm password
     roles: '',
     fullname: '',
     city: ''
@@ -29,15 +27,6 @@ const AddUserFormModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleSave = async () => {
     try {
-      if (userData.password !== userData.confirmPassword) {
-        new Swal({
-          title: 'Error',
-          text: 'Passwords do not match',
-          icon: 'error'
-        })
-        return
-      }
-
       const response = await createUser(userData)
 
       if (response.status === 201) {
@@ -90,8 +79,6 @@ const AddUserFormModal = ({ isOpen, onClose, onSubmit }) => {
     setUserData({
       username: '',
       email: '',
-      password: '',
-      confirmPassword: '', // Reset confirm password
       roles: '',
       fullname: '',
       city: ''
@@ -127,28 +114,6 @@ const AddUserFormModal = ({ isOpen, onClose, onSubmit }) => {
                   name='email'
                   placeholder='Enter Email'
                   value={userData.email}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group className='mb-3' controlId='password'>
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type='password'
-                  name='password'
-                  placeholder='Enter Password'
-                  value={userData.password}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-
-              <Form.Group className='mb-3' controlId='confirmPassword'>
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
-                  type='password'
-                  name='confirmPassword'
-                  placeholder='Confirm Password'
-                  value={userData.confirmPassword}
                   onChange={handleChange}
                 />
               </Form.Group>

@@ -44,6 +44,7 @@ const Order = sequelize.define('Order', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+ 
 });
 
 // Tambahkan foreign key ke user

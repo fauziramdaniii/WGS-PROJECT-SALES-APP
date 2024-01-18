@@ -8,8 +8,8 @@ import Swal from 'sweetalert2'
 import useTermAndConditionStores from '../../stores/termCondition/TermAndConditionStores'
 import {
   getCart,
-  incrementItemQuantity,
-  decrementItemQuantity
+  incrementItemQuantityApi,
+  decrementItemQuantityApi
 } from '../../redux/action/action' // Import removeFromCart action
 
 const Cart = () => {
@@ -119,11 +119,11 @@ const Cart = () => {
     )
 
     const addItem = item => {
-      dispatch(incrementItemQuantity(item.id))
+      dispatch(incrementItemQuantityApi(item.id))
     }
 
     const decrementItem = item => {
-      dispatch(decrementItemQuantity(item.id))
+      dispatch(decrementItemQuantityApi(item.id))
       if (item.quantity === 1) {
         removeItemFromLocalCart(item.id)
       }

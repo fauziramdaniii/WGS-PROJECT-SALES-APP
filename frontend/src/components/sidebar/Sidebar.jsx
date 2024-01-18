@@ -27,7 +27,7 @@ const Sidebar = () => {
       <div className='top'>
         {role === 'superadmin' && (
           <Link to='/superadmin' style={{ textDecoration: 'none' }}>
-            <span className='logo'>Admin App</span>
+            <span className='logo'>Superadmin App</span>
           </Link>
         )}
         {role === 'admin' && (

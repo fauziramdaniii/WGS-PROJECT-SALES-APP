@@ -7,6 +7,7 @@ const ChangePasswordModal = ({ show, onClose }) => {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordsMatch, setPasswordsMatch] = useState(true)
+  const API_URL = `${import.meta.env.VITE_API_URL}`
 
   const handleChangePassword = async () => {
     try {
@@ -16,7 +17,7 @@ const ChangePasswordModal = ({ show, onClose }) => {
       }
 
       const userId = localStorage.getItem('id_user') // Assuming you store userId in localStorage
-      await axios.post(`http://localhost:3000/auth/change-password/${userId}`, {
+      await axios.post(`${API_URL}auth/change-password/${userId}`, {
         oldPassword,
         newPassword
       })

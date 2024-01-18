@@ -44,4 +44,14 @@ router.delete('/cart/:id', async (req, res) => {
   cartController.deleteCart(req, res);
 });
 
+// Increment the quantity of a cart item by ID
+router.put('/cart/increment/:id', async (req, res) => {
+  cartController.incrementCartItem(req, res);
+});
+
+// Decrement the quantity of a cart item by ID
+router.put('/cart/decrement/:id', async (req, res) => {
+  cartController.decrementCartItem(req, res);
+});
+
 module.exports = router;

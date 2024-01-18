@@ -1,6 +1,7 @@
 // controllers/contactUsController.js
 const nodemailer = require('nodemailer');
 const { ContactUs } = require('../models/contactus');
+const { User } = require('../models/user')
 
 const transporter = nodemailer.createTransport({
      service: 'gmail',
@@ -15,7 +16,7 @@ const transporter = nodemailer.createTransport({
         }
       });
 
-const adminEmail = '220434007@fellow.lpkia.ac.id';
+// const adminEmail = '220434007@fellow.lpkia.ac.id';
 
 // Create ContactUs
 const createContactUs = async (req, res) => {
@@ -28,9 +29,19 @@ const createContactUs = async (req, res) => {
       message,
     });
 
-    // Kirim email ke admin
+    // Fetch admin's email from the database based on the role
+    const adminUser = await User.findOne({ roles: 'admin' });
+
+    if (!adminUser) {
+      console.error('Admin user not found');
+      return res.status(500).json({ error: 'Admin user not found' });
+    }
+
+    const adminEmail = adminUser.email;
+
+    // Send email to admin
     const mailOptions = {
-      from: '220434007@fellow.lpkia.ac.id',  // Ganti dengan email pengirim
+      from: '220434007@fellow.lpkia.ac.id',
       to: adminEmail,
       subject: 'New ContactUs Submission',
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,

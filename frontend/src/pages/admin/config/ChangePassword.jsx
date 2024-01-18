@@ -17,10 +17,11 @@ const ChangePassword = () => {
 
     // Ganti "USER_ID" dengan id pengguna yang sesuai
     const userId = localStorage.getItem('id_user')
+    const API_URL = `${import.meta.env.VITE_API_URL}`
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/auth/change-password/${userId}`,
+        `${API_URL}auth/change-password/${userId}`,
         {
           oldPassword,
           newPassword

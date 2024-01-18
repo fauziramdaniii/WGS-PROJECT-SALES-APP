@@ -7,7 +7,7 @@ const Footer = () => {
         <div className='d-flex align-items-center justify-content-center pb-5'>
           <div className='col-md-6'>
             <p className='mb-3 mb-md-0'>
-              Copyright @Andromeda Urban Trends 2023
+              Copyright @Andromeda Urban Trends 2024
               <a
                 href='https://sahibsingh.dev'
                 className='text-decoration-underline text-dark fs-5'

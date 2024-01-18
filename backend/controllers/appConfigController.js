@@ -15,7 +15,7 @@ const appConfigController = {
       }
 
       // Konversi durasi dari detik ke hari untuk kemudahan pemahaman.
-      const durationInDays = config.cancellation_timeout / (24 * 60 * 60);
+      const durationInDays = config.cancellation_timeout / (24 * 60 * 60 * 1000 );
 
       res.status(200).json({
         success: true,

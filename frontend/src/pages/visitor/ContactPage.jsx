@@ -21,12 +21,10 @@ const ContactPage = () => {
 
   const handleSubmit = async e => {
     e.preventDefault()
+    const API_URL = `${import.meta.env.VITE_API_URL}`
 
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/contactUs',
-        formData
-      )
+      const response = await axios.post(`${API_URL}api/contactUs`, formData)
       if (response && response.status === 201) {
         Swal.fire({
           title: 'Sent!',

@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import Footer from '../../components/visitor/Footer'
 import Navbar from '../../components/visitor/Navbar'
-import useCategoryStores from '../../stores/category/CategoryStore'
 import { Link } from 'react-router-dom'
+import useCategoryStore from '../../stores/category/CategoryStore'
 
 const AboutPage = () => {
-  const [data, setData] = useState([])
-  const { getCategory } = useCategoryStores()
+  const [categories, setCategories] = useState([])
 
-  const fetchData = async () => {
-    const response = await getCategory()
-    setData(response.data)
-  }
-  console.log(data)
+  const { getCategory } = useCategoryStore()
   useEffect(() => {
-    fetchData()
-  }, [setData]) // Add an empty dependency array to run the effect only once
+    const fetchData = async () => {
+      const response = await getCategory()
+      setCategories(response.data)
+      console.log(response)
+    }
 
+    fetchData()
+  }, [setCategories])
   return (
     <>
       <Navbar />
@@ -34,14 +34,11 @@ const AboutPage = () => {
           it easy for customers to find fashion items that suit their style. We
           present a diverse range of choices from well-known brands to
           up-and-coming local designers, giving customers the opportunity to
-          explore various styles and fashion trends. Andromeda Urban Trends also
-          proudly features exclusive collections that cannot be found elsewhere,
-          providing customers with an exclusive and individual shopping
-          experience.
+          explore various styles and fashion trends.{' '}
         </p>
         <h2 className='text-center py-4'>Our Products</h2>
         <div className='row'>
-          {data.map(category => (
+          {categories.map(category => (
             <div className='col-md-3 col-sm-6 mb-3 px-3' key={category.id}>
               {/* Use the Link component to create a clickable link */}
               <Link

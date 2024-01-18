@@ -50,25 +50,72 @@ const getCart = () => {
   }
 }
 
-const incrementItemQuantity = productId => ({
+const incrementItemQuantitySuccess = productId => ({
   type: 'INCREMENT_ITEM_QUANTITY',
   payload: productId
 })
 
-const decrementItemQuantity = productId => {
-  return (dispatch, getState) => {
-    const state = getState()
-    const item = state.cart.cartItems.find(item => item.id === productId)
+const incrementItemQuantityApi = productId => {
+  return async dispatch => {
+    try {
+      const response = await axios.put(`${API_URL}/cart/increment/${productId}`)
 
-    if (item && item.quantity > 1) {
-      dispatch({
-        type: 'DECREMENT_ITEM_QUANTITY',
-        payload: productId
-      })
-    } else if (item) {
-      // Jika jumlah mencapai 1, hapus item dari keranjang
-      const id_cart = item.id
-      dispatch(removeFromCartApi(id_cart))
+      // Check if the API request was successful
+      if (response.data.success) {
+        // Dispatch the success action to update the state locally
+        dispatch(incrementItemQuantitySuccess(productId))
+        // Additionally, fetch the updated cart after successful increment
+        dispatch(getCart())
+      } else {
+        throw new Error(
+          response.data.error || 'Failed to increment item quantity'
+        )
+      }
+    } catch (error) {
+      console.error('Error incrementing item quantity:', error.message)
+      // Dispatch the failure action to handle errors
+      dispatch(incrementItemQuantityFailure(error.message))
+    }
+  }
+}
+
+const decrementItemQuantitySuccess = productId => ({
+  type: 'DECREMENT_ITEM_QUANTITY',
+  payload: productId
+})
+
+const decrementItemQuantityApi = productId => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState()
+      const item = state.cart.cartItems.find(item => item.id === productId)
+
+      if (item && item.quantity > 1) {
+        // Make an API request to decrement the item quantity on the server
+        const response = await axios.put(
+          `${API_URL}/cart/decrement/${productId}`
+        )
+
+        // Check if the API request was successful
+        if (response.data.success) {
+          // Dispatch the success action to update the state locally
+          dispatch(decrementItemQuantitySuccess(productId))
+          // Additionally, fetch the updated cart after successful decrement
+          dispatch(getCart())
+        } else {
+          throw new Error(
+            response.data.error || 'Failed to decrement item quantity'
+          )
+        }
+      } else if (item) {
+        // If the quantity is already 1, remove the item from the cart
+        const id_cart = item.id
+        dispatch(removeFromCartApi(id_cart))
+      }
+    } catch (error) {
+      console.error('Error decrementing item quantity:', error.message)
+      // Dispatch the failure action to handle errors
+      dispatch(decrementItemQuantityFailure(error.message))
     }
   }
 }
@@ -108,7 +155,9 @@ export {
   getCartSuccess,
   getCartFailure,
   getCart,
-  incrementItemQuantity,
-  decrementItemQuantity,
+  incrementItemQuantitySuccess,
+  incrementItemQuantityApi,
+  decrementItemQuantitySuccess,
+  decrementItemQuantityApi,
   removeFromCartApi
 }

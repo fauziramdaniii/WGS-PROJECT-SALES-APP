@@ -136,7 +136,7 @@ const cartController = {
        await logActivity({
         timestamp: new Date(),
         activityType: 'Delete Cart',
-        user: 'id_user',
+        user: cart.id_user || 'id_user',
         details: error,
         ipAddress: req.ip,
         device: req.headers['user-agent'],
@@ -145,6 +145,113 @@ const cartController = {
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
   },
+
+  incrementCartItem: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const cartItem = await Cart.findByPk(id);
+
+      if (!cartItem) {
+        return res.status(404).json({ error: 'Cart item not found' });
+      }
+
+      const product = await Product.findByPk(cartItem.id_product);
+
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+
+      // Increment the quantity
+      cartItem.quantity += 1;
+
+      // Check if the updated quantity exceeds available stock
+      if (cartItem.quantity > product.stock) {
+        return res.status(400).json({ error: 'Stock is Not Enough' });
+      }
+
+      if (cartItem.quantity > 5) {
+        return res.status(400).json({ error: 'Cart maxed to 5 of the same item' });
+      }
+
+      await cartItem.save();
+
+      await logActivity({
+        timestamp: new Date(),
+        activityType: 'Increment Cart Item',
+        user: cartItem.id_user,
+        details: `Incremented quantity for product ${cartItem.id_product}`,
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+      });
+
+      return res.status(200).json({ success: true, message: 'Cart item quantity incremented successfully.' });
+    } catch (error) {
+      console.error('Error incrementing cart item quantity:', error);
+      await logActivity({
+        timestamp: new Date(),
+        activityType: 'Increment Cart Item',
+        user: cartItem.id_user || 'id_user', // Replace with actual user ID or some identifier
+        details: error.message || 'Internal Server Error',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Failed',
+      });
+      return res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  },
+
+  decrementCartItem: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const cartItem = await Cart.findByPk(id);
+
+      if (!cartItem) {
+        return res.status(404).json({ error: 'Cart item not found' });
+      }
+
+      const product = await Product.findByPk(cartItem.id_product);
+
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+
+      // Decrement the quantity
+      cartItem.quantity -= 1;
+
+      // Check if the updated quantity is less than 1, remove the item from the cart
+      if (cartItem.quantity < 1) {
+        await cartItem.destroy();
+      } else {
+        await cartItem.save();
+      }
+
+      await logActivity({
+        timestamp: new Date(),
+        activityType: 'Decrement Cart Item',
+        user: cartItem.id_user,
+        details: `Decremented quantity for product ${cartItem.id_product}`,
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Success',
+      });
+
+      return res.status(200).json({ success: true, message: 'Cart item quantity decremented successfully.' });
+    } catch (error) {
+      console.error('Error decrementing cart item quantity:', error);
+      await logActivity({
+        timestamp: new Date(),
+        activityType: 'Decrement Cart Item',
+        user: cartItem.id_user || 'id_user', // Replace with actual user ID or some identifier
+        details: error.message || 'Internal Server Error',
+        ipAddress: req.ip,
+        device: req.headers['user-agent'],
+        status: 'Failed',
+      });
+      return res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  },
+
 };
 
 module.exports = cartController;

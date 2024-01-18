@@ -171,7 +171,7 @@ createOrder: async (req, res) => {
        await logActivity({
         timestamp: new Date(),
         activityType: 'Update Order',
-        user: 'id_user',
+        user: order.id_user || 'id_user',
         details: 'Update Order',
         ipAddress: req.ip,
         device: req.headers['user-agent'],

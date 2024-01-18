@@ -63,7 +63,7 @@ const UserController = {
       await logActivity({
         timestamp: new Date(),
         activityType: 'Add User',
-        user: 'id_user',
+        user: newUser.id || 'id_user',
         details: 'Add User',
         ipAddress: req.ip,
         device: req.headers['user-agent'],

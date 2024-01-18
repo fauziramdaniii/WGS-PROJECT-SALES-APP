@@ -6,8 +6,20 @@ import FullscreenExitOutlinedIcon from '@mui/icons-material/FullscreenExitOutlin
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined'
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined'
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined'
-
+import useOrderStores from '../../stores/order/OrderStore'
+import { useEffect, useState } from 'react'
 const Navbar = () => {
+  const [length, setLength] = useState('')
+  const { getOrder } = useOrderStores()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getOrder()
+      setLength(response.data.length)
+    }
+
+    fetchData()
+  })
   return (
     <div className='navbarAdmin'>
       <div className='wrapper'>
@@ -35,7 +47,7 @@ const Navbar = () => {
           </div> */}
           <div className='item'>
             <CircleNotificationsOutlinedIcon className='icon' />
-            <div className='counter'>1</div>
+            <div className='counter'>{length}</div>
           </div>
           {/* <div className='item'>
             <ChatOutlinedIcon className='icon' />
