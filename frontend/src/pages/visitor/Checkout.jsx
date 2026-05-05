@@ -1,297 +1,289 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Footer from '../../components/visitor/Footer'
 import Navbar from '../../components/visitor/Navbar'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-const Checkout = () => {
-  const state = useSelector(state => state.handleCart)
+import { useSelector, useDispatch } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+import useTermAndConditionStores from '../../stores/termCondition/TermAndConditionStores'
+import { getCart } from '../../redux/action/action'
 
-  const EmptyCart = () => {
-    return (
-      <div className='container'>
-        <div className='row'>
-          <div className='col-md-12 py-5 bg-light text-center'>
-            <h4 className='p-3 display-5'>No item in Cart</h4>
-            <Link to='/' className='btn btn-outline-dark mx-4'>
-              <i className='fa fa-arrow-left'></i> Continue Shopping
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
+const Checkout = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const cartItems = useSelector(state => state.cart.cartItems)
+  const { getTerm } = useTermAndConditionStores()
+
+  const [form, setForm] = useState({
+    recipient_name: '',
+    recipient_phone: '',
+    payment_method: 'cash',
+    notes: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    dispatch(getCart())
+  }, [dispatch])
+
+  const formatToRupiah = amount => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(amount)
   }
 
-  const ShowCheckout = () => {
-    let subtotal = 0
-    let shipping = 30.0
-    let totalItems = 0
-    state.map(item => {
-      return (subtotal += item.price * item.qty)
-    })
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.quantity * (item.product?.price || 0),
+    0
+  )
 
-    state.map(item => {
-      return (totalItems += item.qty)
-    })
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+
+  const validate = () => {
+    const errs = {}
+    if (!form.recipient_name.trim()) errs.recipient_name = 'Nama penerima wajib diisi'
+    if (!form.recipient_phone.trim()) errs.recipient_phone = 'Nomor HP wajib diisi'
+    else if (!/^[0-9]{9,15}$/.test(form.recipient_phone.replace(/\s/g, '')))
+      errs.recipient_phone = 'Nomor HP tidak valid'
+    return errs
+  }
+
+  const handleChange = e => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    setErrors(prev => ({ ...prev, [e.target.name]: '' }))
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    const errs = validate()
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs)
+      return
+    }
+
+    try {
+      // Tampilkan syarat & ketentuan
+      const responseTerm = await getTerm()
+      if (!responseTerm.data || responseTerm.data.length === 0) {
+        Swal.fire('Error', 'Terms & Conditions belum dikonfigurasi. Hubungi admin.', 'error')
+        return
+      }
+
+      const result = await Swal.fire({
+        title: responseTerm.data[0].title,
+        html: responseTerm.data[0].content,
+        showCancelButton: true,
+        confirmButtonText: 'Setuju & Order',
+        cancelButtonText: 'Batal',
+        width: '70%',
+      })
+
+      if (!result.isConfirmed) return
+
+      setLoading(true)
+      const idUser = localStorage.getItem('id_user')
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}api/order`,
+        {
+          id_user: idUser,
+          payment_method: form.payment_method,
+          notes: form.notes || 'Collect at Store',
+          recipient_name: form.recipient_name,
+          recipient_phone: form.recipient_phone,
+        }
+      )
+
+      dispatch(getCart())
+
+      if (form.payment_method === 'transfer') {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Order Berhasil!',
+          html: `
+            <p>Invoice telah dikirim ke email kamu.</p>
+            <p><strong>Silakan upload bukti pembayaran</strong> di halaman <em>My Order</em> agar pesanan dapat diproses.</p>
+          `,
+          confirmButtonText: 'Lihat Order Saya',
+        })
+      } else {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Order Berhasil!',
+          text: 'Invoice telah dikirim ke email kamu. Silakan datang ke toko untuk melakukan pembayaran.',
+          confirmButtonText: 'Lihat Order Saya',
+        })
+      }
+
+      navigate('/dashboard/order')
+    } catch (error) {
+      console.error('Checkout error:', error)
+      const msg = error.response?.data?.error || 'Gagal membuat order. Coba lagi.'
+      Swal.fire('Error', msg, 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (cartItems.length === 0) {
     return (
       <>
-        <div className='container py-5'>
-          <div className='row my-4'>
-            <div className='col-md-5 col-lg-4 order-md-last'>
-              <div className='card mb-4'>
-                <div className='card-header py-3 bg-light'>
-                  <h5 className='mb-0'>Order Summary</h5>
-                </div>
-                <div className='card-body'>
-                  <ul className='list-group list-group-flush'>
-                    <li className='list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0'>
-                      Products ({totalItems})
-                      <span>${Math.round(subtotal)}</span>
-                    </li>
-                    <li className='list-group-item d-flex justify-content-between align-items-center px-0'>
-                      Shipping
-                      <span>${shipping}</span>
-                    </li>
-                    <li className='list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3'>
-                      <div>
-                        <strong>Total amount</strong>
-                      </div>
-                      <span>
-                        <strong>${Math.round(subtotal + shipping)}</strong>
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className='col-md-7 col-lg-8'>
-              <div className='card mb-4'>
-                <div className='card-header py-3'>
-                  <h4 className='mb-0'>Billing address</h4>
-                </div>
-                <div className='card-body'>
-                  <form className='needs-validation' novalidate>
-                    <div className='row g-3'>
-                      <div className='col-sm-6 my-1'>
-                        <label for='firstName' className='form-label'>
-                          First name
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='firstName'
-                          placeholder=''
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Valid first name is required.
-                        </div>
-                      </div>
-
-                      <div className='col-sm-6 my-1'>
-                        <label for='lastName' className='form-label'>
-                          Last name
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='lastName'
-                          placeholder=''
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Valid last name is required.
-                        </div>
-                      </div>
-
-                      <div className='col-12 my-1'>
-                        <label for='email' className='form-label'>
-                          Email
-                        </label>
-                        <input
-                          type='email'
-                          className='form-control'
-                          id='email'
-                          placeholder='you@example.com'
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Please enter a valid email address for shipping
-                          updates.
-                        </div>
-                      </div>
-
-                      <div className='col-12 my-1'>
-                        <label for='address' className='form-label'>
-                          Address
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='address'
-                          placeholder='1234 Main St'
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Please enter your shipping address.
-                        </div>
-                      </div>
-
-                      <div className='col-12'>
-                        <label for='address2' className='form-label'>
-                          Address 2{' '}
-                          <span className='text-muted'>(Optional)</span>
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='address2'
-                          placeholder='Apartment or suite'
-                        />
-                      </div>
-
-                      <div className='col-md-5 my-1'>
-                        <label for='country' className='form-label'>
-                          Country
-                        </label>
-                        <br />
-                        <select className='form-select' id='country' required>
-                          <option value=''>Choose...</option>
-                          <option>India</option>
-                        </select>
-                        <div className='invalid-feedback'>
-                          Please select a valid country.
-                        </div>
-                      </div>
-
-                      <div className='col-md-4 my-1'>
-                        <label for='state' className='form-label'>
-                          State
-                        </label>
-                        <br />
-                        <select className='form-select' id='state' required>
-                          <option value=''>Choose...</option>
-                          <option>Punjab</option>
-                        </select>
-                        <div className='invalid-feedback'>
-                          Please provide a valid state.
-                        </div>
-                      </div>
-
-                      <div className='col-md-3 my-1'>
-                        <label for='zip' className='form-label'>
-                          Zip
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='zip'
-                          placeholder=''
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Zip code required.
-                        </div>
-                      </div>
-                    </div>
-
-                    <hr className='my-4' />
-
-                    <h4 className='mb-3'>Payment</h4>
-
-                    <div className='row gy-3'>
-                      <div className='col-md-6'>
-                        <label for='cc-name' className='form-label'>
-                          Name on card
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='cc-name'
-                          placeholder=''
-                          required
-                        />
-                        <small className='text-muted'>
-                          Full name as displayed on card
-                        </small>
-                        <div className='invalid-feedback'>
-                          Name on card is required
-                        </div>
-                      </div>
-
-                      <div className='col-md-6'>
-                        <label for='cc-number' className='form-label'>
-                          Credit card number
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='cc-number'
-                          placeholder=''
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Credit card number is required
-                        </div>
-                      </div>
-
-                      <div className='col-md-3'>
-                        <label for='cc-expiration' className='form-label'>
-                          Expiration
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='cc-expiration'
-                          placeholder=''
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Expiration date required
-                        </div>
-                      </div>
-
-                      <div className='col-md-3'>
-                        <label for='cc-cvv' className='form-label'>
-                          CVV
-                        </label>
-                        <input
-                          type='text'
-                          className='form-control'
-                          id='cc-cvv'
-                          placeholder=''
-                          required
-                        />
-                        <div className='invalid-feedback'>
-                          Security code required
-                        </div>
-                      </div>
-                    </div>
-
-                    <hr className='my-4' />
-
-                    <button
-                      className='w-100 btn btn-primary '
-                      type='submit'
-                      disabled
-                    >
-                      Continue to checkout
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
+        <Navbar />
+        <div className='container my-5 py-5 text-center'>
+          <h4 className='display-5'>Keranjang kamu kosong</h4>
+          <Link to='/' className='btn btn-outline-dark mt-3'>
+            <i className='fa fa-arrow-left me-2'></i> Lanjut Belanja
+          </Link>
         </div>
+        <Footer />
       </>
     )
   }
+
   return (
     <>
       <Navbar />
       <div className='container my-3 py-3'>
         <h1 className='text-center'>Checkout</h1>
         <hr />
-        {state.length ? <ShowCheckout /> : <EmptyCart />}
+        <div className='row my-4'>
+
+          {/* Form Checkout */}
+          <div className='col-md-7'>
+            <div className='card mb-4'>
+              <div className='card-header py-3'>
+                <h5 className='mb-0'>Detail Penerima</h5>
+              </div>
+              <div className='card-body'>
+                <form onSubmit={handleSubmit}>
+                  <div className='mb-3'>
+                    <label className='form-label'>Nama Penerima <span className='text-danger'>*</span></label>
+                    <input
+                      type='text'
+                      className={`form-control ${errors.recipient_name ? 'is-invalid' : ''}`}
+                      name='recipient_name'
+                      placeholder='Nama lengkap penerima'
+                      value={form.recipient_name}
+                      onChange={handleChange}
+                    />
+                    {errors.recipient_name && <div className='invalid-feedback'>{errors.recipient_name}</div>}
+                  </div>
+
+                  <div className='mb-3'>
+                    <label className='form-label'>Nomor HP <span className='text-danger'>*</span></label>
+                    <input
+                      type='text'
+                      className={`form-control ${errors.recipient_phone ? 'is-invalid' : ''}`}
+                      name='recipient_phone'
+                      placeholder='Contoh: 08123456789'
+                      value={form.recipient_phone}
+                      onChange={handleChange}
+                    />
+                    {errors.recipient_phone && <div className='invalid-feedback'>{errors.recipient_phone}</div>}
+                  </div>
+
+                  <div className='mb-3'>
+                    <label className='form-label'>Catatan (opsional)</label>
+                    <textarea
+                      className='form-control'
+                      name='notes'
+                      rows={2}
+                      placeholder='Catatan tambahan untuk toko...'
+                      value={form.notes}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <hr />
+                  <h5 className='mb-3'>Metode Pembayaran</h5>
+
+                  <div className='mb-2'>
+                    <div className='form-check mb-2'>
+                      <input
+                        className='form-check-input'
+                        type='radio'
+                        name='payment_method'
+                        id='cash'
+                        value='cash'
+                        checked={form.payment_method === 'cash'}
+                        onChange={handleChange}
+                      />
+                      <label className='form-check-label' htmlFor='cash'>
+                        <strong>Tunai (Cash)</strong>
+                        <small className='d-block text-muted'>Bayar langsung di toko saat mengambil barang</small>
+                      </label>
+                    </div>
+                    <div className='form-check'>
+                      <input
+                        className='form-check-input'
+                        type='radio'
+                        name='payment_method'
+                        id='transfer'
+                        value='transfer'
+                        checked={form.payment_method === 'transfer'}
+                        onChange={handleChange}
+                      />
+                      <label className='form-check-label' htmlFor='transfer'>
+                        <strong>Transfer Bank</strong>
+                        <small className='d-block text-muted'>Transfer ke rekening toko, lalu upload bukti pembayaran</small>
+                      </label>
+                    </div>
+                  </div>
+
+                  {form.payment_method === 'transfer' && (
+                    <div className='alert alert-info mt-3 mb-0'>
+                      <strong>Info Rekening:</strong><br />
+                      Bank BCA — No. Rek: <strong>1234567890</strong><br />
+                      Atas Nama: <strong>WGS Sales App</strong><br />
+                      <small>Setelah transfer, upload bukti bayar di halaman My Order.</small>
+                    </div>
+                  )}
+
+                  <hr />
+                  <button
+                    type='submit'
+                    className='btn btn-dark btn-lg w-100'
+                    disabled={loading}
+                  >
+                    {loading ? 'Memproses...' : 'Konfirmasi Order'}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div className='col-md-5'>
+            <div className='card mb-4'>
+              <div className='card-header py-3 bg-light'>
+                <h5 className='mb-0'>Ringkasan Pesanan</h5>
+              </div>
+              <div className='card-body'>
+                {cartItems.map(item => (
+                  <div key={item.id} className='d-flex justify-content-between mb-2'>
+                    <span>
+                      {item.product?.name}
+                      <small className='text-muted d-block'>x{item.quantity}</small>
+                    </span>
+                    <span>{formatToRupiah(item.quantity * (item.product?.price || 0))}</span>
+                  </div>
+                ))}
+                <hr />
+                <div className='d-flex justify-content-between'>
+                  <span>Total ({totalItems} produk)</span>
+                  <strong>{formatToRupiah(subtotal)}</strong>
+                </div>
+              </div>
+            </div>
+            <Link to='/cart' className='btn btn-outline-secondary w-100'>
+              <i className='fa fa-arrow-left me-2'></i> Kembali ke Keranjang
+            </Link>
+          </div>
+
+        </div>
       </div>
       <Footer />
     </>

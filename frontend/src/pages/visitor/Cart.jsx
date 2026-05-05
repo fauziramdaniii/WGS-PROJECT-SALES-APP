@@ -2,21 +2,17 @@ import React, { useState, useEffect } from 'react'
 import Footer from '../../components/visitor/Footer'
 import Navbar from '../../components/visitor/Navbar'
 import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
-import Swal from 'sweetalert2'
-import useTermAndConditionStores from '../../stores/termCondition/TermAndConditionStores'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   getCart,
   incrementItemQuantityApi,
   decrementItemQuantityApi
-} from '../../redux/action/action' // Import removeFromCart action
+} from '../../redux/action/action'
 
 const Cart = () => {
-  const { getTerm } = useTermAndConditionStores()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const cartItems = useSelector(state => state.cart.cartItems)
-  // console.log(cartItems, 'di cart')
   const [localCartItems, setLocalCartItems] = useState([])
 
   useEffect(() => {
@@ -57,50 +53,8 @@ const Cart = () => {
     return formatter.format(amount)
   }
 
-  const collectAtStore = async () => {
-    try {
-      // Confirm order with SweetAlert
-      const responseTerm = await getTerm()
-      const termsAndConditions = responseTerm.data[0].content
-
-      // Confirm order with SweetAlert
-      const result = await Swal.fire({
-        title: responseTerm.data[0].title,
-        html: termsAndConditions,
-        showCancelButton: true,
-        confirmButtonText: 'Order',
-        cancelButtonText: 'Next Time',
-        width: '70%' // Set the width as needed
-      })
-
-      if (!result.isConfirmed) {
-        return // If not confirmed, do nothing
-      }
-
-      // Send order to API
-      const idUser = localStorage.getItem('id_user')
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}api/order`,
-        {
-          id_user: idUser,
-          payment_method: 'cash',
-          notes: 'Collect at Store'
-        }
-      )
-      dispatch(getCart())
-
-      console.log(response)
-      if (response.status !== 201) {
-        throw new Error('Failed to place order')
-      }
-
-      // Show success notification
-      Swal.fire('Order Placed, Check Email For Invoice Booking!', '', 'success')
-    } catch (error) {
-      console.error('Error placing order:', error)
-      // Handle error or dispatch an action to handle the error
-      Swal.fire('Error', 'Failed to place order', 'error')
-    }
+  const goToCheckout = () => {
+    navigate('/checkout')
   }
 
   const ShowCart = () => {
@@ -231,10 +185,10 @@ const Cart = () => {
                       </li>
                     </ul>
                     <button
-                      className='btn btn-dark btn-lg btn-block'
-                      onClick={collectAtStore}
+                      className='btn btn-dark btn-lg btn-block w-100'
+                      onClick={goToCheckout}
                     >
-                      Collect at Store
+                      Proceed to Checkout
                     </button>
                   </div>
                 </div>

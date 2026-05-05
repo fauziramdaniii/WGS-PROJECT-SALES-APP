@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -8,14 +7,40 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import TablePagination from '@mui/material/TablePagination'
-import CircularProgress from '@mui/material/CircularProgress'
-import Box from '@mui/material/Box'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import useOrderStores from '../../../../stores/order/OrderStore'
 import Sidebar from '../../../../components/sidebar/Sidebar'
 import Navbar from '../../../../components/navbar/Navbar'
 import './list.scss'
+import './table.scss'
+
+const STATUS_CONFIG = {
+  pending_payment: { label: 'Menunggu Pembayaran', color: '#f0ad4e', bg: '#fff8ee' },
+  confirmed:       { label: 'Dikonfirmasi',          color: '#5bc0de', bg: '#eef8fb' },
+  ready_to_pickup: { label: 'Siap Diambil',          color: '#5cb85c', bg: '#eefbee' },
+  sold:            { label: 'Selesai',               color: '#777',    bg: '#f5f5f5' },
+  canceled:        { label: 'Dibatalkan',            color: '#d9534f', bg: '#fff0f0' },
+  booked:          { label: 'Booked (Lama)',         color: '#337ab7', bg: '#eef4fb' },
+}
+
+const StatusBadge = ({ status }) => {
+  const s = STATUS_CONFIG[status] || { label: status, color: '#333', bg: '#eee' }
+  return (
+    <span style={{
+      background: s.bg, color: s.color, border: `1px solid ${s.color}`,
+      borderRadius: 6, padding: '3px 10px', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
+    }}>
+      {s.label}
+    </span>
+  )
+}
+
+const NEXT_STATUS = {
+  pending_payment: { next: 'confirmed',       label: 'Konfirmasi Pembayaran' },
+  confirmed:       { next: 'ready_to_pickup', label: 'Siap Diambil' },
+  ready_to_pickup: { next: 'sold',            label: 'Tandai Selesai' },
+}
 
 const ListOrder = () => {
   const { getOrder } = useOrderStores()
@@ -26,59 +51,69 @@ const ListOrder = () => {
   const fetchData = async () => {
     try {
       const response = await getOrder()
-      console.log(response)
       setDataOrder(response.data)
     } catch (error) {
-      console.error('error fetching data: ', error)
+      console.error('error fetching data:', error)
     }
   }
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  useEffect(() => { fetchData() }, [])
 
-  const formatToRupiah = amount => {
-    const formatter = new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    })
-    return formatter.format(amount)
-  }
+  const formatToRupiah = amount =>
+    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount)
 
-  const handleConfirmStatus = async orderId => {
-    Swal.fire({
-      title: 'Do you want to confirm the order?',
-      showDenyButton: true,
+  const handleUpdateStatus = async (orderId, currentStatus) => {
+    const cfg = NEXT_STATUS[currentStatus]
+    if (!cfg) return
+
+    const result = await Swal.fire({
+      title: `${cfg.label}?`,
+      text: `Status akan diubah ke: "${STATUS_CONFIG[cfg.next]?.label}"`,
+      icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Confirm',
-      denyButtonText: 'Cancel'
-    }).then(async result => {
-      if (result.isConfirmed) {
-        try {
-          await axios.put(
-            `${import.meta.env.VITE_API_URL}api/order/${orderId}/status`,
-            {
-              status: 'sold'
-            }
-          )
-          Swal.fire('Order confirmed!', '', 'success')
-          fetchData()
-        } catch (error) {
-          console.error('Error confirming status:', error)
-          Swal.fire('Error confirming order', '', 'error')
-        }
-      }
+      confirmButtonText: 'Ya, Lanjutkan',
+      cancelButtonText: 'Batal',
     })
+    if (!result.isConfirmed) return
+
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL}api/order/${orderId}/status`, { status: cfg.next })
+      Swal.fire('Berhasil', `Status diubah ke ${STATUS_CONFIG[cfg.next]?.label}`, 'success')
+      fetchData()
+    } catch (error) {
+      Swal.fire('Error', 'Gagal mengubah status', 'error')
+    }
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
+  const handleCancelOrder = async (orderId) => {
+    const result = await Swal.fire({
+      title: 'Batalkan Order?',
+      text: 'Stok produk akan dikembalikan.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Ya, Batalkan',
+      cancelButtonText: 'Kembali',
+    })
+    if (!result.isConfirmed) return
+
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL}api/order/${orderId}/status`, { status: 'canceled' })
+      Swal.fire('Dibatalkan', 'Order berhasil dibatalkan.', 'success')
+      fetchData()
+    } catch (error) {
+      Swal.fire('Error', 'Gagal membatalkan order', 'error')
+    }
   }
 
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
+  const handleViewProof = (filename) => {
+    Swal.fire({
+      title: 'Bukti Pembayaran',
+      imageUrl: `${import.meta.env.VITE_API_URL}uploads/${filename}`,
+      imageAlt: 'Bukti Bayar',
+      imageWidth: '100%',
+      width: 600,
+    })
   }
 
   return (
@@ -86,98 +121,110 @@ const ListOrder = () => {
       <Sidebar />
       <div className='listContainer'>
         <Navbar />
-        {dataOrder.length > 0 ? (
-          <div>
-            <TableContainer component={Paper} className='table'>
-              <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-                <TableHead>
-                  <TableRow>
-                    <TableCell className='tableCell'>Tracking ID</TableCell>
-                    <TableCell className='tableCell'>Product</TableCell>
-                    <TableCell className='tableCell'>Quantity</TableCell>
-                    <TableCell className='tableCell'>Date</TableCell>
-                    <TableCell className='tableCell'>Amount</TableCell>
-                    <TableCell className='tableCell'>Method</TableCell>
-                    <TableCell className='tableCell'>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? dataOrder.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                    : dataOrder
-                  ).map(row => (
-                    <TableRow key={row.id}>
-                      <TableCell className='tableCell'>{row.id}</TableCell>
-                      <TableCell className='tableCell'>
-                        <div className='cellWrapper'>
-                          <img
-                            src={`${import.meta.env.VITE_API_URL}uploads/${
-                              row.product.image
-                            }`}
-                            alt=''
-                            className='image'
-                          />
-                          {row.product.name}
-                        </div>
-                      </TableCell>
-                      <TableCell className='tableCell'>
-                        {row.quantity}
-                      </TableCell>
-                      <TableCell className='tableCell'>
-                        {row.order_date}
-                      </TableCell>
-                      <TableCell className='tableCell'>
-                        {' '}
-                        {formatToRupiah(row.total_amount)}
-                      </TableCell>
-                      <TableCell className='tableCell'>
-                        {row.payment_method}
-                      </TableCell>
-                      <TableCell className='tableCell'>
-                        {row.status[0] === 'canceled' ? (
-                          <span style={{ color: 'red' }}>Canceled</span>
-                        ) : (
+        <TableContainer component={Paper} className='table' style={{ padding: 20 }}>
+          <Table sx={{ minWidth: 650 }} aria-label='order table'>
+            <TableHead>
+              <TableRow sx={{ background: '#f5f5f5' }}>
+                <TableCell><strong>#</strong></TableCell>
+                <TableCell><strong>Produk</strong></TableCell>
+                <TableCell><strong>Qty</strong></TableCell>
+                <TableCell><strong>Total</strong></TableCell>
+                <TableCell><strong>Penerima</strong></TableCell>
+                <TableCell><strong>Metode Bayar</strong></TableCell>
+                <TableCell><strong>Bukti Bayar</strong></TableCell>
+                <TableCell><strong>Status</strong></TableCell>
+                <TableCell><strong>Aksi</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? dataOrder.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                : dataOrder
+              ).map(row => {
+                const status = row.status?.[0] || 'pending_payment'
+                const isFinal = status === 'sold' || status === 'canceled'
+
+                return (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell>
+                      <div className='cellWrapper'>
+                        <img
+                          src={`${import.meta.env.VITE_API_URL}uploads/${row.product?.image}`}
+                          alt=''
+                          className='image'
+                          style={{ width: 36, height: 36, borderRadius: 6, objectFit: 'cover', marginRight: 8, flexShrink: 0 }}
+                        />
+                        <span>{row.product?.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{row.quantity}</TableCell>
+                    <TableCell>{formatToRupiah(row.total_amount)}</TableCell>
+                    <TableCell>
+                      <div>{row.recipient_name || '-'}</div>
+                      <small style={{ color: '#888' }}>{row.recipient_phone || ''}</small>
+                    </TableCell>
+                    <TableCell>
+                      {row.payment_method === 'transfer' ? 'Transfer Bank' : 'Tunai (Cash)'}
+                    </TableCell>
+                    <TableCell>
+                      {row.payment_proof ? (
+                        <button
+                          className='btn btn-sm btn-outline-info'
+                          onClick={() => handleViewProof(row.payment_proof)}
+                        >
+                          Lihat Bukti
+                        </button>
+                      ) : (
+                        <span style={{ color: '#bbb', fontSize: 12 }}>Belum ada</span>
+                      )}
+                    </TableCell>
+                    <TableCell><StatusBadge status={status} /></TableCell>
+                    <TableCell>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {!isFinal && NEXT_STATUS[status] && (
                           <button
-                            className={`btn ${
-                              row.status[0] === 'sold'
-                                ? 'btn-outline-secondary btn-sm'
-                                : 'btn-outline-success btn-sm'
-                            }`}
-                            onClick={() => handleConfirmStatus(row.id)}
-                            disabled={
-                              row.status[0] === 'sold' ||
-                              row.status[0] === 'canceled'
-                            }
+                            className='btn btn-sm btn-outline-success'
+                            onClick={() => handleUpdateStatus(row.id, status)}
                           >
-                            {row.status[0] === 'sold' ? 'Sold' : 'Confirm'}
+                            {NEXT_STATUS[status].label}
                           </button>
                         )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, 50]}
-              component='div'
-              count={dataOrder.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </div>
-        ) : (
-          <p style={{ textAlign: 'center', marginTop: '200px' }}>
-            <Box size='large'>
-              <CircularProgress />
-            </Box>
-          </p>
-        )}
+                        {!isFinal && (
+                          <button
+                            className='btn btn-sm btn-outline-danger'
+                            onClick={() => handleCancelOrder(row.id)}
+                          >
+                            Batalkan
+                          </button>
+                        )}
+                        {isFinal && (
+                          <span style={{ color: '#aaa', fontSize: 12 }}>—</span>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+              {dataOrder.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={9} align='center' style={{ padding: 40, color: '#aaa' }}>
+                    Belum ada order
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component='div'
+          count={dataOrder.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          onRowsPerPageChange={e => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0) }}
+        />
       </div>
     </div>
   )

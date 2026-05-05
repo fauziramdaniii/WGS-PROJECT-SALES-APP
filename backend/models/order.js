@@ -23,10 +23,7 @@ const Order = sequelize.define('Order', {
   status: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: false,
-    defaultValue: ['available'],
-    validate: {
-      isIn: [['booked', 'sold', 'canceled', 'available']],
-    },
+    defaultValue: ['pending_payment'],
   },
   total_amount: {
     type: DataTypes.FLOAT,
@@ -43,6 +40,18 @@ const Order = sequelize.define('Order', {
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  recipient_name: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  recipient_phone: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  payment_proof: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
  
 });
